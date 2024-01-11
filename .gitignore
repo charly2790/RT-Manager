@@ -1,0 +1,11 @@
+.idea
+.vscode
+node_modules/
+**/node_modules/*
+**/coverage/
+**/.nyc_output/
+/config/post.env
+/config/default.env
+/config/dev.env
+uploads/**
+!.gitkeep
