@@ -1,10 +1,11 @@
-import express from 'express';
+import { Router } from 'express';
 import multer from 'multer';
-import usuarioController from '../controllers/usuarios.controller.js';
+import { create,sayhello } from '../controllers/usuarios.controller.js';
 
 const upload = multer()
-const router = express.Router();
+const router = Router();
 
-router.post('/usuarios',upload.none(), usuarioController.create);
+router.post('/usuarios',upload.none(), create);
+router.get('/usuarios',upload.none(), sayhello);
 
 export default router;

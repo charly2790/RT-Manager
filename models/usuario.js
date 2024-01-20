@@ -1,8 +1,8 @@
-import { Model, DataTypes } from 'sequelize';
+import { DataTypes } from 'sequelize';
 import {sequelize} from '../config/database.js';
-import bcrypt from 'bcrypt';
+import bcrypt, { genSaltSync } from 'bcrypt';
 
-sequelize.define('Usuario',{
+export const Usuario = sequelize.define('Usuario',{
     idUsuario:{
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -14,62 +14,46 @@ sequelize.define('Usuario',{
     },
     password: {
       type: DataTypes.VIRTUAL,
-      allowNull: false,
-      set(value) {
-        this.setDataValue('password', value);
-        bcrypt.hash(value,10,(err, hash)=>{
-          this.setDataValue('password_hash', hash)
-        })
-      }
+      allowNull: false,      
     },
-    password_hash: DataTypes.STRING,
-    idRol: DataTypes.STRING,
-    fecha_inicio: DataTypes.DATE,
-    fecha_fin: DataTypes.DATE,
-    estado: DataTypes.STRING,
-    fecha_creacion: DataTypes.DATE,
-    usuario_creador: DataTypes.INTEGER,
-    ultima_modificacion: DataTypes.DATE
-})
-
-export default () => {
-  class Usuario extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+    passwordHash: {
+      type: DataTypes.STRING
+    },
+    idRol: {
+      type: DataTypes.STRING
+    },
+    fechaInicio:{
+      type: DataTypes.DATE
+    },
+    fechaFin: {
+      type: DataTypes.DATE
+    },
+    estado: {
+     type: DataTypes.STRING
+    },
+    fechaCreacion: {
+     type: DataTypes.DATE,
+    },
+    idUsuarioCreador: {
+     type: DataTypes.INTEGER,
+    },
+    idUsuarioModificador: {
+      type: DataTypes.DATE
     }
+},{
+  tableName:'usuarios',
+  hooks:{
+    beforeCreate: (Usuario) => {                  
+      return new Promise((resolve, reject)=>{
+        if(Usuario.password){        
+          bcrypt.hash(Usuario.password,10,(err, hash)=>{            
+            Usuario.password_hash = hash;
+            Usuario.password = null;
+            resolve();
+          });
+        }
+      })
+      
+    }    
   }
-  Usuario.init({
-    idUsuario: DataTypes.INTEGER,
-    email: DataTypes.STRING,
-    password: DataTypes.VIRTUAL,
-    password_hash: DataTypes.STRING,
-    idRol: DataTypes.STRING,
-    fecha_inicio: DataTypes.DATE,
-    fecha_fin: DataTypes.DATE,
-    estado: DataTypes.STRING,
-    fecha_creacion: DataTypes.DATE,
-    usuario_creador: DataTypes.INTEGER,
-    ultima_modificacion: DataTypes.DATE
-  }, {
-    sequelize,
-    modelName: 'Usuario',
-  });
-
-  Usuario.beforeCreate((user, options) => {
-    return new Promise((resolve, reject) => {
-      if(user.password){
-        bcrypt.hash(user.password, 10, (err, hash) => {
-          user.password_hash = hash,
-          resolve();
-        })
-      }
-    })
-  })
-
-  return Usuario;
-};
+})
