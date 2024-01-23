@@ -1,9 +1,9 @@
 import json from "body-parser";
-import { Usuario } from "../models/usuario.js";
+import Usuario from "../models/usuario.js";
 
 
-export const create = async (req, res) => {                
-    
+export const create = async (req, res) => {                    
+        
     let data = {            
         email: req.body.email,
         password: req.body.password,            

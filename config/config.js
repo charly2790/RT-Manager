@@ -13,4 +13,9 @@ export const config = {
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,    
     dialect: process.env.DB_DIALECT,
+    appport: process.env.APP_PORT,
+    secret: process.env.SECRET,
+    redishost: process.env.REDIS_HOST,
+    redisport: process.env.REDIS_PORT
+
 }
