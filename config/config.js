@@ -13,9 +13,10 @@ export const config = {
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,    
     dialect: process.env.DB_DIALECT,
-    appport: process.env.APP_PORT,
+    appPort: process.env.APP_PORT,
     secret: process.env.SECRET,
-    redishost: process.env.REDIS_HOST,
-    redisport: process.env.REDIS_PORT
-
+    redisHost: process.env.REDIS_HOST,
+    redisPort: process.env.REDIS_PORT,
+    redisIndexDb: process.env.REDIS_INDEXDB,
+    tokenTTL:process.env.TOKEN_TTL
 }
