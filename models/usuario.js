@@ -67,8 +67,4 @@ Usuario.prototype.autenticarPassword = function (password) {
   })
 }
 
-Usuario.prototype.test = function(){
-  return "pingo";
-}
-
 export default Usuario;
