@@ -1,17 +1,18 @@
 import json from "body-parser";
-import Usuario from "../models/usuario.js";
+import Usuario from "../models/Usuario.js";
 
 
-export const create = async (req, res) => {                    
+export const create = async (req, res) => {
         
-    let data = {            
-        email: req.body.email,
-        password: req.body.password,            
-        idRol: req.body.idRol,
-        fecha_inicio: req.body.fecha_inicio,
-    };
+    let {idEquipo, email, password, idRol, fecha_inicio } = req.body;
 
-    console.log(`data: ${JSON.stringify(data)}`);
+    let data = {            
+        email,
+        password,            
+        idRol,
+        fecha_inicio,
+    };
+            
     try{            
         const newUser = await Usuario.create(data);
         res.json(newUser)
@@ -19,9 +20,5 @@ export const create = async (req, res) => {
         console.log(`Error: ${error}`);
         res.json(error.message);
     }
-
 }
-
-export const sayhello = (req, res) => {
-    res.send('¡Hola mundo!');
-} 
+ 

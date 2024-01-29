@@ -1,4 +1,4 @@
-import Usuario from "../models/usuario.js"
+import Usuario from "../models/Usuario.js"
 import { generateToken } from "./helpers/tokenUtils.js";
 import { redisClient } from "../config/database.js";
 import { config } from "../config/config.js";
