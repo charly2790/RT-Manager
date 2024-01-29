@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
 
-export const Equipo = sequelize.define('Equipo',{
+const Equipo = sequelize.define('Equipo',{
     idEquipo: {
       type: DataTypes.INTEGER,
     },
@@ -39,3 +39,5 @@ export const Equipo = sequelize.define('Equipo',{
       type:DataTypes.INTEGER
     },
 },{tableName:'equipos'})
+
+export default Equipo;

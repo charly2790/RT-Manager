@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
 
-export const Suscripcion = sequelize.define('Suscripcion',{
+const Suscripcion = sequelize.define('Suscripcion',{
     idSuscripcion: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -28,3 +28,5 @@ export const Suscripcion = sequelize.define('Suscripcion',{
 },{
   tableName:'suscripciones'
 })
+
+export default Suscripcion;
