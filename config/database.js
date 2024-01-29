@@ -15,7 +15,7 @@ export const dbsConnection = () => {
                 .then(() => {
                     console.log("Base de datos redis: 🆗");
 
-                    sequelize.sync()
+                    sequelize.sync({force:true})
                         .then(() => {
                             console.log("Sincronización base de datos postgres: 🆗");
                         })
