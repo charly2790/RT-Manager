@@ -5,7 +5,7 @@ const Rol = sequelize.define('Rol', {
   idRol: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoincrement: true
+    autoIncrement: true
   },
   nombre: {
     type: DataTypes.STRING,
