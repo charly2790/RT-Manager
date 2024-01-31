@@ -1,5 +1,5 @@
 import Usuario from "../models/Usuario.js"
-import { generateToken } from "./helpers/tokenUtils.js";
+import { generateToken } from "../helpers/tokenUtils.js";
 import { redisClient } from "../config/database.js";
 import { config } from "../config/config.js";
 
@@ -17,6 +17,8 @@ export const login = async (req, res) => {
     } catch (error) {
         return res.status(401).json({ message: "Authentication failed" });
     }
+
+    if(!usuario) return res.status(401).json({ message:"User or password invalid" });
 
     let auth = await usuario.autenticarPassword(password);
 
