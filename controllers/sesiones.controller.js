@@ -36,7 +36,9 @@ export const login = async (req, res) => {
 
     if(token) return res.status(400).json({message: "method not allowed"});
 
-    token = generateToken({ email, idEquipo });
+    const { idUsuario:idUserLogged } = usuario;
+
+    token = generateToken({ email, idEquipo, idUserLogged });
 
     if (!token) return res.status(500).json({ message: "Internal server error" });
 
