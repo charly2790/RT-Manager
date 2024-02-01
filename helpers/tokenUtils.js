@@ -1,5 +1,6 @@
 import { config } from "../config/config.js"
 import jwt from 'jsonwebtoken';
+import { redisClient } from "../config/database.js";
 
 export const generateToken = (payload) => {
     try {
@@ -24,7 +25,7 @@ export const getPayload = (token) => {
     return payload;
 }
 
-const getToken = async (redisClient, key) => {
+export const getToken = async (key) => {
     //busca un token con la key recibida como parámetro en redis    
     let tokenFound;
 
