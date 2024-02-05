@@ -32,6 +32,7 @@ export const verifyToken = async (req, res, next) => {
     
     //Agrego payload al usuario p/ completar campos "creadoPor"/"modificadoPor"
     req.body.idUserLogged = payload.idUserLogged;
+    req.body.idRol = payload.idRol;
 
     next();
 
