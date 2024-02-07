@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
+import Sesion from "./Sesion.js";
 
 const Suscripcion = sequelize.define('Suscripcion',{
     idSuscripcion: {
@@ -28,5 +29,16 @@ const Suscripcion = sequelize.define('Suscripcion',{
 },{
   tableName:'suscripciones'
 })
+
+Suscripcion.hasMany(Sesion,{
+  foreignKey: 'idSuscripcion',
+  sourceKey: 'idSuscripcion'
+})
+
+Sesion.belongsTo(Suscripcion,{
+  foreignKey: 'idSuscripcion',
+  targetKey: 'idSuscripcion'
+})
+
 
 export default Suscripcion;

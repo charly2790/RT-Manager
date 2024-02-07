@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/database.js';
 import bcrypt, { genSaltSync } from 'bcrypt';
+import Suscripcion from './Suscripcion.js';
 
 
 const Usuario = sequelize.define('Usuario', {
@@ -21,7 +22,7 @@ const Usuario = sequelize.define('Usuario', {
     type: DataTypes.STRING
   },
   idRol: {
-    type: DataTypes.STRING
+    type: DataTypes.INTEGER
   },
   fechaInicio: {
     type: DataTypes.DATE
@@ -66,5 +67,12 @@ Usuario.prototype.autenticarPassword = function (password) {
     })
   })
 }
+
+//Suscripciones
+Usuario.hasMany(Suscripcion, { foreignKey: 'idUsuario' });
+Suscripcion.belongsTo(Usuario);
+
+//roles
+
 
 export default Usuario;

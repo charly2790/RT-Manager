@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
+import Usuario from "./Usuario.js";
 
 const Rol = sequelize.define('Rol', {
   idRol: {
@@ -24,4 +25,14 @@ const Rol = sequelize.define('Rol', {
   tableName: 'roles'
 });
 
+Rol.hasMany(Usuario, { 
+  foreignKey: 'idRol',
+  sourceKey: 'idRol'});
+
+Usuario.belongsTo(Rol, {
+  foreignKey: 'idRol',
+  targetKey: 'idRol',
+});
+
 export default Rol;
+
