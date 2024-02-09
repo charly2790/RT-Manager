@@ -1,4 +1,4 @@
-import SesionEntrenamiento from "../models/SesionEntrenamiento.js"
+import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 
 export const create = async (req, res) => {
     
