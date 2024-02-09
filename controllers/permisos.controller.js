@@ -15,9 +15,9 @@ export const create = async (req, res) => {
 
     try{
         const newPermiso = await Permiso.create(data);
-        res.json(newPermiso)
+        return res.status(200).json(newPermiso);
     }catch(error){
         console.log(`Error: ${error}`);
-        res.json(error.message);
+        return res.status(500).json({message: "Internal server error"});
     }
 }
