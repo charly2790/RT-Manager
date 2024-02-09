@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
-import Sesion from "./Sesion.js";
+import SesionEntrenamiento from "./SesionEntrenamiento.js";
 
 const Suscripcion = sequelize.define('Suscripcion',{
     idSuscripcion: {
@@ -35,7 +35,7 @@ Suscripcion.hasMany(Sesion,{
   sourceKey: 'idSuscripcion'
 })
 
-Sesion.belongsTo(Suscripcion,{
+SesionEntrenamiento.belongsTo(Suscripcion,{
   foreignKey: 'idSuscripcion',
   targetKey: 'idSuscripcion'
 })

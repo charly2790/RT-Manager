@@ -1,6 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
-import Sesion from "./Sesion.js";
+import Sesion from "./SesionEntrenamiento.js";
 
 const TipoSesion = sequelize.define('TipoSesion', {
     idTipoSesion:{
