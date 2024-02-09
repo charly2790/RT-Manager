@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
 import Entrenamiento from "./Entrenamiento.js";
 
-const Sesion = sequelize.define('Sesion',{
+const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     idSesion:{
         type: DataTypes.INTEGER,  
         primaryKey: true,
@@ -37,14 +37,14 @@ const Sesion = sequelize.define('Sesion',{
     }
 },{tableName: 'sesiones'});
 
-Sesion.hasOne(Entrenamiento,{
+SesionEntrenamiento.hasOne(Entrenamiento,{
   foreignKey: 'idSesion',
   sourceKey: 'idSesion'
 });
 
-Entrenamiento.belongsTo(Sesion,{
+Entrenamiento.belongsTo(SesionEntrenamiento,{
   foreignKey: 'idSesion',
   targetKey: 'idSesion'
 })
 
-export default Sesion;
+export default SesionEntrenamiento;
