@@ -25,3 +25,25 @@ export const createSuscripcion = async (req, res, next) => {
         res.json(error.message);
     }
 }
+
+export const getSuscripciones = async (req, res) => {
+    
+    let { idEquipo } = req.query;
+
+    if(!idEquipo) return res.status(400).json({message: "All fields are required"});
+        
+    let suscripciones = [];
+
+    try {
+        suscripciones = await Suscripcion.findAll({ where: { idEquipo, activo: true } } );
+    } catch (error) {
+        console.log(`Error al recuperar suscripciones: \n ${error}`);
+        return res.status(500).json({message: "Internal server error"});
+    }
+
+    if(suscripciones.length > 0){
+        return res.status(200).json({ suscripciones })
+    }else{
+        return res.status(200).json("No subscriptions found");
+    }
+}

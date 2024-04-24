@@ -1,5 +1,6 @@
 import json from "body-parser";
 import Usuario from "../models/Usuario.js";
+import Suscripcion from "../models/Suscripcion.js";
 
 
 export const create = async (req, res, next) => {
@@ -28,4 +29,24 @@ export const create = async (req, res, next) => {
     }
 
 }
- 
+
+export const getUsuarios = async (req, res) => {
+
+    let { idEquipo } = req.query;
+
+    if(!idEquipo) return res.status(400).json({message: "All fields are required"});
+    
+    let usuarios = [];
+
+    try {
+        usuarios = await Usuario.findAll({ include: { model: Suscripcion, where: { idEquipo, activo: true }} });
+    } catch (error) {
+        console.log(`Error al recuperar usuarios: \n ${error}`);
+        return res.status(500).json({message: "Internal server error"});
+    }
+
+    if(usuarios.length > 0 ) 
+        return res.status(200).json({ usuarios })
+    else
+        return res.status(200).json("No users found");
+}
