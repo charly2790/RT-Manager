@@ -24,7 +24,8 @@ export const verifyPermisos = (permisoRequerido) => {
         console.log(`permiso requerido: ${permisoRequerido}`);
         console.log(`----------------------------------------------------------`);        
 
-        if(permisosUsuario.includes(`${recurso}_ALL` || permisoRequerido)){
+        if(permisosUsuario.includes(`${recurso}_ALL`) || 
+            permisosUsuario.includes(permisoRequerido)){
             next();
         }else{
             return res.status(401).json({message:"Permisos insuficientes"});
