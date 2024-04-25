@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from '../config/database.js'
+import { sequelize } from '../config/database.js';
 import SesionEntrenamiento from "./SesionEntrenamiento.js";
 
 const Suscripcion = sequelize.define('Suscripcion',{
@@ -7,10 +7,7 @@ const Suscripcion = sequelize.define('Suscripcion',{
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
-    },
-    idUsuario: {
-      type: DataTypes.INTEGER
-    },
+    },    
     idEquipo: {
       type: DataTypes.INTEGER
     },
@@ -30,7 +27,7 @@ const Suscripcion = sequelize.define('Suscripcion',{
   tableName:'suscripciones'
 })
 
-Suscripcion.hasMany(Sesion,{
+Suscripcion.hasMany(SesionEntrenamiento,{
   foreignKey: 'idSuscripcion',
   sourceKey: 'idSuscripcion'
 })
