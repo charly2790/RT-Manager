@@ -27,3 +27,20 @@ export const create = async (req, res) => {
         return res.status(500).json('Internal server error');
     }
 }
+
+export const getById = async (req, res) =>{
+
+    const { idSuscripcion } = req.query;
+
+    console.log(`idSuscripcion: ${idSuscripcion}`);
+
+    if( !idSuscripcion ){return res.status(400).json('Missing fields')};
+
+    try {
+        let sesiones = await SesionEntrenamiento.findAll({ where: { idSuscripcion } });
+        return res.status(200).json(sesiones)        
+    } catch (error) {
+        console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);
+        return res.status(500).json('Internal server error');
+    }
+}
