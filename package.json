@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "export NODE_ENV=dev && nodemon start",
-    "prod": "export NODE_ENV=prd && nodemon server.js",
+    "prod": "export NODE_ENV=prd && node server.js",
     "migrate-dev": "export NODE_ENV=dev && sequelize db:migrate"
   },
   "keywords": [],
