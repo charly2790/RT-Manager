@@ -2,7 +2,22 @@ import { config } from "./config.js";
 import Sequelize from 'sequelize';
 import { createClient } from 'redis';
 
-export const sequelize = new Sequelize(config.database, config.username, config.password, config);
+const { database, username, password, host, dialect, appPort } = config;
+
+export const sequelize = new Sequelize({
+    database,
+    username,
+    password,
+    host,
+    dialect,
+    appPort,
+    dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
+      },
+});
 
 export const redisClient = createClient({ url: `redis://${config.redisHost}:${config.redisPort}/${config.redisIndexDb}` });
 
@@ -15,11 +30,11 @@ export const dbsConnection = () => {
                 .then(() => {
                     console.log("Base de datos redis: 🆗");
 
-                    sequelize.sync({force:true})
+                    sequelize.sync({force: false})
                         .then(() => {
                             console.log("Sincronización base de datos postgres: 🆗");
                         })
-                        .catch(() => {
+                        .catch((error) => {
                             console.log("Sincronización base de datos postgres: 🚫\n", error);
                         })
                 })
