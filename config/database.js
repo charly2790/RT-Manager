@@ -2,7 +2,19 @@ import { config } from "./config.js";
 import Sequelize from 'sequelize';
 import { createClient } from 'redis';
 
-const { database, username, password, host, dialect, appPort } = config;
+const { 
+    database, 
+    username, 
+    password, 
+    host, 
+    dialect, 
+    appPort,
+    redisUrlKey, 
+    redisHost, 
+    redisPort, 
+    redisUser, 
+    redisPassword, 
+    redisIndexDb } = config;
 
 export const sequelize = new Sequelize({
     database,
@@ -13,13 +25,16 @@ export const sequelize = new Sequelize({
     appPort,
     dialectOptions: {
         ssl: {
-          require: true,
+          require: false,
           rejectUnauthorized: false,
         },
       },
 });
 
-export const redisClient = createClient({ url: `redis://${config.redisHost}:${config.redisPort}/${config.redisIndexDb}` });
+let credentialsString = redisUser?`${redisUser}:${redisPassword}@`:'';
+let redisStrCon = `${redisUrlKey}://${credentialsString}${redisHost}:${redisPort}/${redisIndexDb}`;
+
+export const redisClient = createClient({ url: redisStrCon});
 
 export const dbsConnection = () => {
     sequelize.authenticate()
