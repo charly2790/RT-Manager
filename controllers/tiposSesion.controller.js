@@ -29,7 +29,7 @@ export const getTiposSesion = async (req, res) => {
 
     try {
         tiposSesion = await TipoSesion.findAll();
-        return res.status(200).json(tiposSesion);
+        return res.status(200).json({tiposSesion});
     } catch (error) {
         console.log(`Error al obtener tipos de sesiones de entrenamiento: ${error.message}`);
         return res.status(500).json('Internal server error');
