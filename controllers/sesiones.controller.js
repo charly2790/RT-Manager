@@ -45,16 +45,29 @@ export const login = async (req, res) => {
     }catch(error){
         console.error(`Error al obtener key de redis:\n ${error}`);
         return res.status(500).json({message: "Internal server error"});
-    }
+    }        
 
+    const userLogged = {
+        idEquipo,
+        idSuscripcion: suscripcion.idSuscripcion,
+        idUsuario: usuario.idUsuario,
+        idRol: usuario.idRol,
+        email: usuario.email,
+        activo: suscripcion.activo,
+        token,
+    }
+    
     if(token) {
         console.log(`Token encontrado en redis`);
-        return res.status(200).json({ token });
+        return res.status(200).json({ userLogged });
     }
-
-    const { idUsuario:idUserLogged, idRol } = usuario;    
-
-    token = generateToken({ idUserLogged, idRol, idEquipo, email });
+    
+    token = generateToken({ 
+        idUserLogged: userLogged.idUsuario, 
+        idRol: userLogged.idRol,
+        idEquipo,
+        email 
+        });
 
     if (!token) return res.status(500).json({ message: "Internal server error" });
 
@@ -62,8 +75,9 @@ export const login = async (req, res) => {
     
     try {
         const saveResultRedis = await redisClient.set(key,token,{'EX': tokenTTL});
+        userLogged.token = token;
         console.log(`Nuevos datos almacenados en redis ${saveResultRedis}`);
-        return res.status(200).json({ token });
+        return res.status(200).json({ userLogged });
 
     } catch (error) {
         console.error(`Error al guardar key en redis:\n ${error}`);
