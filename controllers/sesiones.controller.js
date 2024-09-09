@@ -1,8 +1,9 @@
-import Usuario from "../models/Usuario.js"
-import Suscripcion from "../models/Suscripcion.js";
+import { config } from "../config/config.js";
 import { generateToken } from "../helpers/tokenUtils.js";
 import { redisClient } from "../config/database.js";
-import { config } from "../config/config.js";
+import Rol from "../models/Rol.js";
+import Suscripcion from "../models/Suscripcion.js";
+import Usuario from "../models/Usuario.js"
 
 
 export const login = async (req, res) => {
@@ -14,13 +15,13 @@ export const login = async (req, res) => {
     let usuario,suscripcion;
 
     try {
-        usuario = await Usuario.findOne({ where: { email: email } });
+        usuario = await Usuario.findOne({ where: { email: email }, include: { model: Rol } });
     } catch (error) {
         console.error(`Error al buscar usuario:\n ${error}`);
         return res.status(500).json({ message: "Internal server error" });
     }
 
-    if(!usuario) return res.status(401).json({ message:"User or password invalid" });
+    if(!usuario) return res.status(401).json({ message:"User or password invalid" });        
 
     let auth = await usuario.autenticarPassword(password);
 
@@ -45,13 +46,16 @@ export const login = async (req, res) => {
     }catch(error){
         console.error(`Error al obtener key de redis:\n ${error}`);
         return res.status(500).json({message: "Internal server error"});
-    }        
+    }
+    
+    const { dataValues: { nombre } } = usuario.Rol;
 
     const userLogged = {
         idEquipo,
         idSuscripcion: suscripcion.idSuscripcion,
         idUsuario: usuario.idUsuario,
         idRol: usuario.idRol,
+        rol: nombre,
         email: usuario.email,
         activo: suscripcion.activo,
         token,
@@ -68,6 +72,8 @@ export const login = async (req, res) => {
         idEquipo,
         email 
         });
+
+
 
     if (!token) return res.status(500).json({ message: "Internal server error" });
 
