@@ -21,5 +21,8 @@ export const config = {
     redisUser: process.env.REDIS_USER,
     redisPassword:process.env.REDIS_PASSWORD,
     redisIndexDb: process.env.REDIS_INDEXDB,
-    tokenTTL:process.env.TOKEN_TTL
+    tokenTTL:process.env.TOKEN_TTL,
+    cloudinaryName: process.env.CLOUDINARY_NAME,
+    cloudinaryAPIKey: process.env.CLOUDINARY_API_KEY,
+    cloudinaryAPISecret: process.env.CLOUDINARY_API_SECRET,
 }
