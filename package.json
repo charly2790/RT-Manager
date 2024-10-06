@@ -8,7 +8,8 @@
     "docker": "NODE_ENV=docker nodemon start",
     "dev": "export NODE_ENV=dev && nodemon start",
     "prod": "export NODE_ENV=prd && node server.js",
-    "migrate-dev": "export NODE_ENV=dev && npx sequelize-cli db:migrate"
+    "migrate-dev": "export NODE_ENV=dev && npx sequelize-cli db:migrate",
+    "migrate-docker": "export NODE_ENV=docker && npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-validator": "^7.2.0",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
     "multer": "^1.4.5-lts.1",
@@ -29,7 +31,8 @@
     "pg-hstore": "^2.3.4",
     "postgres": "^3.4.3",
     "redis": "^4.6.12",
-    "sequelize": "^6.35.2"
+    "sequelize": "^6.35.2",
+    "validation-result": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

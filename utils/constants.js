@@ -1,0 +1,1 @@
+export const defaultProfileImageUrl = 'https://res.cloudinary.com/dev7swtde/image/upload/v1728164795/ProfilePictures/l6vkwm31pvbuqpsvosnr.jpg'

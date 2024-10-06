@@ -1,12 +1,20 @@
 import { sequelize } from "../config/database.js"
 import { DataTypes } from 'sequelize';
-import Usuario from './'
+import Usuario from './Usuario.js'
 
-const Perfil = sequelize.define('Perfil', {
+const Perfil = sequelize.define('Perfil', {    
     idPerfil: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    idUsuario: {
+        type: DataTypes.INTEGER,
+        references:{
+            model: Usuario,
+            key: 'idUsuario'
+        },
+        allowNull: false,
     },
     nombre: {
         type: DataTypes.STRING,
@@ -19,6 +27,12 @@ const Perfil = sequelize.define('Perfil', {
     nombreCompleto: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    apodo: {
+        type: DataTypes.STRING,        
+    },
+    genero: {
+        type: DataTypes.STRING
     },
     fechaNacimiento: {
         type: DataTypes.DATE,
@@ -34,10 +48,7 @@ const Perfil = sequelize.define('Perfil', {
     },
     marcasPersonales:{
         type: DataTypes.JSON
-    },
-    fechaCreacion: {
-        type: DataTypes.DATE,
-    },
+    },   
     idUsuarioCreador: {
         type: DataTypes.INTEGER,
     },
@@ -48,7 +59,7 @@ const Perfil = sequelize.define('Perfil', {
     tableName: 'perfiles'
 })
 
-Perfil.belongsTo(Usuario);
-Usuario.hasOne(Perfil)
+Perfil.belongsTo(Usuario, {foreignKey: 'idUsuario'});
+Usuario.hasOne(Perfil, { foreignKey: 'idUsuario' });
 
 export default Perfil;
