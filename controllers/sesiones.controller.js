@@ -1,6 +1,7 @@
 import { config } from "../config/config.js";
 import { generateToken } from "../helpers/tokenUtils.js";
 import { redisClient } from "../config/database.js";
+import Perfil from "../models/Perfil.js"
 import Rol from "../models/Rol.js";
 import Suscripcion from "../models/Suscripcion.js";
 import Usuario from "../models/Usuario.js"
@@ -15,7 +16,7 @@ export const login = async (req, res) => {
     let usuario,suscripcion;
 
     try {
-        usuario = await Usuario.findOne({ where: { email: email }, include: { model: Rol } });
+        usuario = await Usuario.findOne({ where: { email: email }, include: [{ model: Rol }, { model: Perfil}] });
     } catch (error) {
         console.error(`Error al buscar usuario:\n ${error}`);
         return res.status(500).json({ message: "Internal server error" });
@@ -58,6 +59,7 @@ export const login = async (req, res) => {
         rol: nombre,
         email: usuario.email,
         activo: suscripcion.activo,
+        perfil: usuario.Perfil,
         token,
     }
     
