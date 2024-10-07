@@ -39,7 +39,7 @@ export const create = async (req, res) => {
         genero: req.body.genero,
         fechaNacimiento: req.body.fechaNacimiento,
         avatar: url,
-        telefono: req.body.tel,
+        telefono: req.body.telefono,
         redesSociales: {
             Facebook: req.body.Facebook || null,
             Instagram: req.body.Instagram || null,
@@ -48,8 +48,8 @@ export const create = async (req, res) => {
     }
 
     try {
-        const result = await Perfil.create(newProfile);
-        return res.status(200).json({ status: 'ok', data: result });
+        const result = await Perfil.create(newProfile);        
+        return res.status(200).json(result);
     } catch (error) {
         console.error(`Error al crear el perfil \n${error.message}`);
         return res.status(500).json({ message: "Internal server error" });
