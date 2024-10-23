@@ -3,9 +3,9 @@ import { v2 as cloudinary } from 'cloudinary';
 import { validationResult } from 'express-validator';
 import Perfil from '../models/Perfil.js';
 
-export const create = async (req, res) => {
+const redesSociales = ['Facebook', 'Instagram', 'X']
 
-    console.log('req.body-->',req.body);
+export const create = async (req, res) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -48,15 +48,40 @@ export const create = async (req, res) => {
     }
 
     try {
-        const result = await Perfil.create(newProfile);        
+        const result = await Perfil.create(newProfile);
         return res.status(200).json(result);
     } catch (error) {
         console.error(`Error al crear el perfil \n${error.message}`);
         return res.status(500).json({ message: "Internal server error" });
-    }      
+    }
 }
 
 export const update = async (req, res) => {
-    console.log(req.body);
-    return res.status(200).json({ message: 'Perfil actualizado correctamente' });
+
+    const userId = req.params.id;
+    let updatedFields = { ...req.body };
+
+    const perfil = await Perfil.findOne({ idUsuario: userId });
+
+    if (!perfil) return res.status(200).json({ message: "Perfil no encontrado" });
+
+    updatedFields.redesSociales = {...perfil.redesSociales};
+    
+    redesSociales.forEach(red => {        
+        if (updatedFields[red]) {            
+            updatedFields.redesSociales[red] = updatedFields[red];
+            delete updatedFields[red]
+        }
+    })    
+    
+    try {
+        perfil.update({ ...updatedFields });
+        perfil.save();
+        return res.status(200).json({ message: 'Perfil Actualizado correctamente', perfil });
+    } catch (error) {
+        console.error(`Error al buscar suscripción:\n ${error}`);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+
+
 }
