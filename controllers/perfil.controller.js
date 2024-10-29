@@ -30,9 +30,7 @@ export const testUpload = (req, res) => {
 
 }
 
-export const create = async (req, res) => {
-    console.log(req.body); // Verifica los campos del formulario
-    console.log(req.file); // Verifica el archivo cargado
+export const create = async (req, res) => {    
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -88,6 +86,8 @@ export const update = async (req, res) => {
     const userId = req.params.id;
     let updatedFields = { ...req.body };
 
+    delete updatedFields.idUsuario;
+
     const perfil = await Perfil.findOne({ idUsuario: userId });
 
     if (!perfil) return res.status(200).json({ message: "Perfil no encontrado" });
@@ -100,7 +100,6 @@ export const update = async (req, res) => {
             delete updatedFields[red]
         }
     });
-
     
     if (req.file) {                        
         const url = cloudinary.url(req.file.filename,
@@ -115,13 +114,9 @@ export const update = async (req, res) => {
                     gravity: 'auto',
 
                 }]
-            });
-
-        console.log('url generada--->', url);
+            });        
         updatedFields.avatar = url;
-    }
-
-    console.log('updatedFields: ', updatedFields);
+    }    
     
     try {
         perfil.update({ ...updatedFields });

@@ -10,6 +10,7 @@ const Perfil = sequelize.define('Perfil', {
     },
     idUsuario: {
         type: DataTypes.INTEGER,
+        primaryKey: true,
         references:{
             model: Usuario,
             key: 'idUsuario'

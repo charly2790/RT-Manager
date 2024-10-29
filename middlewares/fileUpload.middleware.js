@@ -17,16 +17,4 @@ const storage = new CloudinaryStorage({
     },
 });
 
-// https://res.cloudinary.com/dev7swtde/image/upload/v1727955428/ProfilePictures/gmvh9wafywvjihcdpvv0.jpg
-/* 
-PARA ALMACENAMIENTO LOCAL
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');        
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname); // Renombra el archivo
-    }
-}) */
-
 export const upload = multer({storage});
