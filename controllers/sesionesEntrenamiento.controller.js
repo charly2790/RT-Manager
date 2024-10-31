@@ -1,3 +1,4 @@
+import Entrenamiento from "../models/Entrenamiento.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 
 const validarSesiones = (sesiones) => {
@@ -67,7 +68,7 @@ export const getById = async (req, res) => {
     if (!idSuscripcion) { return res.status(400).json('Missing fields') };
 
     try {
-        let sesiones = await SesionEntrenamiento.findAll({ where: { idSuscripcion } });
+        let sesiones = await SesionEntrenamiento.findAll({ where: { idSuscripcion }, include: { model: Entrenamiento } });
         return res.status(200).json(sesiones)
     } catch (error) {
         console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);
