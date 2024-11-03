@@ -20,6 +20,9 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     Completado:{
         type: DataTypes.BOOLEAN
     },
+    idEstado:{
+        type: DataTypes.INTEGER
+    },
     idTipoSesion:{
         type: DataTypes.INTEGER
     },

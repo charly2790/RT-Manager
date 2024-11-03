@@ -1,5 +1,8 @@
 import Entrenamiento from "../models/Entrenamiento.js";
+import EstadoSesion from "../models/EstadoSesion.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
+import TipoSesion from "../models/TipoSesion.js";
+
 
 const validarSesiones = (sesiones) => {
 
@@ -21,6 +24,7 @@ const validarSesiones = (sesiones) => {
     }, { valid: true, message: [] })
 
 }
+
 
 const existeSesion = async ({ idSuscripcion, idTipoSesion, fechaSesion, Objetivo }) => {
 
@@ -68,7 +72,14 @@ export const getById = async (req, res) => {
     if (!idSuscripcion) { return res.status(400).json('Missing fields') };
 
     try {
-        let sesiones = await SesionEntrenamiento.findAll({ where: { idSuscripcion }, include: { model: Entrenamiento } });
+        let sesiones = await SesionEntrenamiento.findAll(
+            { 
+                where: { idSuscripcion },
+                include: [
+                    { model: Entrenamiento },
+                    { model: EstadoSesion },
+                    { model: TipoSesion }] 
+            });
         return res.status(200).json(sesiones)
     } catch (error) {
         console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);
