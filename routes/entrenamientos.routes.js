@@ -5,7 +5,7 @@ import { verifyPermisos } from '../middlewares/rbac.middleware.js';
 
 const router = Router();
 
-router.post('/sesionesEntrenamiento',verifyToken,verifyPermisos('ENTRENAMIENTO-CREATE'),create);
+router.post('/entrenamientos',verifyToken,verifyPermisos('ENTRENAMIENTO-CREATE'),create);
 
 export default router;
 
