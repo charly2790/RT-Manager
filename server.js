@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import entrenamientosRoutes from './routes/entrenamientos.routes.js';
 import equiposRoutes from './routes/equipos.routes.js';
+import estadosSesionesRoutes from './routes/estadosSesion.routes.js';
 import express from 'express';
 import methodOverride from 'method-override';
 import permisosRolRoutes from './routes/permisosRol.routes.js';
@@ -26,6 +27,7 @@ app.use(cors());
 
 //Routes
 app.use(entrenamientosRoutes);
+app.use(estadosSesionesRoutes);
 app.use(equiposRoutes);
 app.use(permisosRolRoutes);
 app.use(permisosRoutes);
@@ -36,6 +38,7 @@ app.use(suscripcionesRoutes);
 app.use(tiposSesionRoutes);
 app.use(usuarioRoutes);
 app.use(perfilRoutes);
+
 
 const responderPeticion = (req, res) => {
     res.send('¡Esta será una gran aplicación!');
