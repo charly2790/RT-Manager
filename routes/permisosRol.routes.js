@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { create } from '../controllers/permisosRol.crontroller.js';
+import { create } from '../controllers/permisosRol.controller.js';
 import { verifyToken } from '../middlewares/verifyToken.middleware.js';
 import { verifyPermisos } from '../middlewares/rbac.middleware.js';
 
