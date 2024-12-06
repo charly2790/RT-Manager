@@ -13,7 +13,10 @@ const Entrenamiento = sequelize.define('Entrenamiento', {
     distancia: {
         type: DataTypes.FLOAT
     },
-    tiempo: {
+    tiempoNeto: {
+        type: DataTypes.TIME
+    },
+    tiempoTotal: {
         type: DataTypes.TIME
     },
     rpe:{
@@ -21,6 +24,9 @@ const Entrenamiento = sequelize.define('Entrenamiento', {
     },
     link:{
         type: DataTypes.TEXT
+    },
+    comentario:{
+        type: DataTypes.TEXT,
     },
     usuarioCreador:{
         type: DataTypes.INTEGER

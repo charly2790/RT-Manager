@@ -32,6 +32,9 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     idEntrenamiento:{
         type:DataTypes.INTEGER
     },
+    comentario:{
+        type:DataTypes.TEXT
+    },
     idUsuarioCreador:{
         type:DataTypes.INTEGER
     },

@@ -4,7 +4,10 @@ import Permiso from "../models/Permiso.js";
 
 export const verifyPermisos = (permisoRequerido) => {
     
+    console.log('PERMISO REQUERIDO--->', permisoRequerido);
+    
     return async (req, res, next) => {
+
 
         const recurso = permisoRequerido.split("_")[0];        
 
@@ -25,7 +28,8 @@ export const verifyPermisos = (permisoRequerido) => {
         console.log(`----------------------------------------------------------`);        
 
         if(permisosUsuario.includes(`${recurso}_ALL`) || 
-            permisosUsuario.includes(permisoRequerido)){
+            permisosUsuario.includes(permisoRequerido)){            
+            req.rol = { idRol: rolUsuario.idRol, nombre: rolUsuario.nombre };            
             next();
         }else{
             return res.status(401).json({message:"Permisos insuficientes"});

@@ -1,3 +1,5 @@
+import _ from "lodash";
+import { completarFecha } from "../helpers/Utils.js";
 import Entrenamiento from "../models/Entrenamiento.js";
 import EstadoSesion from "../models/EstadoSesion.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
@@ -80,6 +82,19 @@ export const getById = async (req, res) => {
                     { model: EstadoSesion },
                     { model: TipoSesion }] 
             });
+
+        if (sesiones.length > 0){
+            sesiones = sesiones.map( sesion => {
+                if( !_.isEmpty(sesion.Entrenamiento)){                    
+                    const { tiempoNeto, tiempoTotal } = sesion.Entrenamiento;                    
+                    sesion.Entrenamiento.tiempoNeto = completarFecha(tiempoNeto);
+                    sesion.Entrenamiento.tiempoTotal = completarFecha(tiempoTotal);
+                }
+                return sesion;
+            })            
+        }
+
+        console.log('sesiones -->', sesiones);
         return res.status(200).json(sesiones)
     } catch (error) {
         console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);

@@ -1,22 +1,33 @@
 import Entrenamiento from "../models/Entrenamiento.js"
 
-export const create = async (req, res) => {
+export const create = async (req, res) => {    
+    
+    const { 
+        comentario, 
+        distancia,
+        idSesion, 
+        idUserLogged,
+        link, 
+        rpe, 
+        tiempoNeto, 
+        tiempoTotal, 
+    } = req.body;        
 
-    const { idSesion, distancia, tiempo, rpe, link, idUserLogged } = req.body;
-
-    if( !idSesion || !distancia || !tiempo || !rpe){
+    if( !idSesion || !distancia || !tiempoTotalSesion || !tiempoNetoSesion || !rpe){
         return res.status(400).json({ message: 'Missing fields'});
-    }
+    }    
 
     const data = {
-        idSesion,
+        comentario,
         distancia,
-        tiempo,
-        rpe,
+        idSesion,
         link:link?link:undefined,
+        rpe,
+        tiempoNeto: new Date(tiempoNeto).toTimeString().split(' ')[0],
+        tiempoTotal: new Date(tiempoTotal).toTimeString().split(' ')[0],
         usuarioCreador:idUserLogged,
         usuarioModificador:idUserLogged,
-    }
+    }    
 
     try{
         const newEntrenamiento = await Entrenamiento.create(data);
