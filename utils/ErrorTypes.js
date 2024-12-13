@@ -1,0 +1,4 @@
+export const errorTypes = {
+    VALIDATION_ERROR: 'VALIDATION_ERROR',
+    DATABASE_ERROR: 'DATABASE_ERROR',    
+}
