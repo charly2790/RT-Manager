@@ -4,6 +4,8 @@ import Entrenamiento from "../models/Entrenamiento.js";
 import EstadoSesion from "../models/EstadoSesion.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 import TipoSesion from "../models/TipoSesion.js";
+import { ErrorFactory } from "../utils/ErrorFactory.js";
+import { errorTypes } from "../utils/ErrorTypes.js";
 
 
 const validarSesiones = (sesiones) => {
@@ -26,8 +28,6 @@ const validarSesiones = (sesiones) => {
     }, { valid: true, message: [] })
 
 }
-
-
 const existeSesion = async ({ idSuscripcion, idTipoSesion, fechaSesion, Objetivo }) => {
 
     let sesiones = [];
@@ -41,7 +41,6 @@ const existeSesion = async ({ idSuscripcion, idTipoSesion, fechaSesion, Objetivo
     }
 
 }
-
 export const create = async (req, res) => {
 
     const { sesiones, idUserLogged } = req.body;
@@ -66,7 +65,6 @@ export const create = async (req, res) => {
         return res.status(500).json('Internal server error');
     }
 }
-
 export const getById = async (req, res) => {
 
     const { idSuscripcion } = req.query;
@@ -93,11 +91,80 @@ export const getById = async (req, res) => {
                 return sesion;
             })            
         }
-
-        console.log('sesiones -->', sesiones);
+        
         return res.status(200).json(sesiones)
     } catch (error) {
         console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);
         return res.status(500).json('Internal server error');
     }
+}
+
+export const updateStatus = async(req, res) =>{    
+
+    try {
+        const { idSesion } = req.body;
+        const { rol } = req;
+
+        if( !idSesion || !rol ){
+            throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'Parámetros faltantes o no validos');
+        }
+        
+        console.log('req.rol--->', rol);
+        console.log('req.body---->', idSesion);
+    
+        const sesion = await SesionEntrenamiento.findOne({
+            where :{
+                idSesion
+            }
+        })
+    
+        console.log('Sesion encontrada--->', sesion);
+    
+        if(_.isNil(sesion)){
+            throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, `No se ha encontrado una sesion de entrenamiento asociada al id ${idSesion}`)
+        }
+
+        let newIdStatus = sesion.idEstado;
+        
+        switch(rol.nombre){
+            case 'EQUIPO_MEMBER':
+                newIdStatus = 2; //ENVIADA
+                break;
+            case 'EQUIPO_ADMIN':
+                newIdStatus = 4; //VALIDADA
+                break;            
+        }
+
+        console.log('El nuevo estado será--->', newIdStatus);
+
+        const sesionUpdated = SesionEntrenamiento.update({
+            idEstado: newIdStatus
+        },
+        {
+            where: {
+                idSesion
+            }
+        })
+
+        if(!sesionUpdated){
+            throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'No se ha podido actualizar el estado de la sesion de entrenamiento')
+        }
+        
+        return res.status(200).json(sesionUpdated)
+    } catch (error) {
+        
+        let STATUS_CODE = 500;
+        let MESSAGE = 'Error interno del servidor';
+
+        switch (error.name) {
+            case errorTypes.VALIDATION_ERROR:
+                STATUS_CODE = error.statusCode;
+                MESSAGE = error.message;
+                break;
+        }
+
+        return res.status(STATUS_CODE).json({ message: MESSAGE });
+    }
+
+
 }

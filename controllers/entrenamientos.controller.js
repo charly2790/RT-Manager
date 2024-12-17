@@ -16,30 +16,33 @@ export const create = async (req, res) => {
             rpe,
             tiempoNeto,
             tiempoTotal,
-        } = req.body;      
-        
-        if(!req.rol){
+        } = req.body;
+
+        if (!req.rol) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.ROLE_NOT_PROVIDED_ERROR)
         }
 
+        const { nombre: rolUsuario } = req.rol;
+
         let data = {};
 
-        if(req.rol === 'EQUIPO_MEMBER'){
-            if(!idSesion || !link){
-                throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)    
+        if (rolUsuario === 'EQUIPO_MEMBER') {
+            console.log('idSesion ---> ', idSesion);
+            if (!idSesion || !link) {
+                throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)
             }
 
             data = {
-                comentario,                
+                comentario,
                 idSesion,
-                link,                                
+                link,
             }
 
-        }else if(req.rol === 'EQUIPO_ADMIN'){
+        } else if (req.rol === 'EQUIPO_ADMIN') {
             if (!idSesion || !distancia || !tiempoTotalSesion || !tiempoNetoSesion || !rpe) {
                 throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)
             }
-            
+
             data = {
                 comentario,
                 distancia,
@@ -51,7 +54,7 @@ export const create = async (req, res) => {
                 usuarioCreador: idUserLogged,
                 usuarioModificador: idUserLogged,
             }
-        }        
+        }
         let newEntrenamiento = await Entrenamiento.create(data);
 
         if (!newEntrenamiento) {
@@ -60,11 +63,11 @@ export const create = async (req, res) => {
 
         return res.status(200).json(newEntrenamiento);
     } catch (error) {
-        
+
         let STATUS_CODE = 500;
         let MESSAGE = 'Error interno del servidor';
 
-        if(error.name){
+        if (error.name) {
             STATUS_CODE = error.statusCode;
             MESSAGE = error.message;
         }
