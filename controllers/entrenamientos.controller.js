@@ -1,8 +1,9 @@
 import _ from "lodash";
 import { ErrorFactory } from "../utils/ErrorFactory.js";
+import { errorMessages } from "../utils/ErrorMessages.js";
 import { errorTypes } from "../utils/ErrorTypes.js";
 import Entrenamiento from "../models/Entrenamiento.js"
-import { errorMessages } from "../utils/ErrorMessages.js";
+import { formatToLocalTime } from "../helpers/Utils.js";
 
 export const create = async (req, res) => {
 
@@ -79,6 +80,10 @@ export const create = async (req, res) => {
 
 export const patch = async (req, res) => {
 
+    
+
+    console.log('Entra al patch---->', req.body);
+
     try {
         const { idEntrenamiento } = req.params;
         const { idSesion, idUsuario } = req.body;
@@ -92,9 +97,6 @@ export const patch = async (req, res) => {
         delete updatedFields.idSesion;
         delete updatedFields.idUsuario;
 
-        console.log('idEntrenamiento ---> ', idEntrenamiento);
-        console.log('idSesion ---> ', idSesion);
-
         const entrenamiento = await Entrenamiento.findOne({
             where: {
                 idEntrenamiento,
@@ -102,10 +104,16 @@ export const patch = async (req, res) => {
             }
         });
 
-        console.log('entrenamiento ---> ', entrenamiento);
-
         if (_.isEmpty(entrenamiento)) throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, `No se ha encontrado un entrenamiento asociado al id ${idEntrenamiento}`);
+        
+        if (!_.isNil(updatedFields.tiempoNeto)) {            
+            updatedFields.tiempoNeto = formatToLocalTime(updatedFields.tiempoNeto);
+        }
 
+        if (!_.isNil(updatedFields.tiempoTotal)) {
+            updatedFields.tiempoTotal = formatToLocalTime(updatedFields.tiempoTotal);
+        }        
+        
         await entrenamiento.update({ ...updatedFields });
 
         return res.status(200).json({
