@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from '../config/database.js'
+import { sequelize } from '../config/database.js';
+import MediaEntrenamiento from "./MediaEntrenamiento.js";
 
 const Entrenamiento = sequelize.define('Entrenamiento', {
     idEntrenamiento:{
@@ -35,5 +36,15 @@ const Entrenamiento = sequelize.define('Entrenamiento', {
         type: DataTypes.INTEGER
     }
 },{tableName: 'entrenamientos' });
+
+Entrenamiento.hasMany(MediaEntrenamiento,{
+    foreignKey: 'idEntrenamiento',
+    sourceKey: 'idEntrenamiento'
+});
+
+MediaEntrenamiento.belongsTo(Entrenamiento,{
+    foreignKey: 'idEntrenamiento',
+    targetKey: 'idEntrenamiento'
+})
 
 export default Entrenamiento;

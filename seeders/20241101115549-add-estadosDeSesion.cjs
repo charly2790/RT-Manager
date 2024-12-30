@@ -7,7 +7,8 @@ module.exports = {
       { descripcion: 'PENDIENTE', createdAt: new Date(), updatedAt: new Date() },
       { descripcion: 'ENVIADA', createdAt: new Date(), updatedAt: new Date() },
       { descripcion: 'VALIDADA', createdAt: new Date(), updatedAt: new Date() },
-      { descripcion: 'VENCIDA', createdAt: new Date(), updatedAt: new Date() }
+      { descripcion: 'VENCIDA', createdAt: new Date(), updatedAt: new Date() },
+      { descripcion: 'EN REVISIÓN', createdAt: new Date(), updatedAt: new Date() }
     ], {});
   },
 
