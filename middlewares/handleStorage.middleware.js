@@ -19,8 +19,7 @@ export const handleStorage = (
         switch(storageType){
             case STORAGE_TYPES.LOCAL:
                 break;
-            case STORAGE_TYPES.CLOUDINARY:
-                console.log('La estrategia a ejecutar es cloudinary');
+            case STORAGE_TYPES.CLOUDINARY:                
                 strategy = new CloudinaryStrategy();
                 settings = {
                     folder,

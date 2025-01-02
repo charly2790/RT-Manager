@@ -6,6 +6,8 @@ import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 import TipoSesion from "../models/TipoSesion.js";
 import { ErrorFactory } from "../utils/ErrorFactory.js";
 import { errorTypes } from "../utils/ErrorTypes.js";
+import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
+import Documento from "../models/Documento.js";
 
 
 const validarSesiones = (sesiones) => {
@@ -76,7 +78,13 @@ export const getById = async (req, res) => {
             { 
                 where: { idSuscripcion },
                 include: [
-                    { model: Entrenamiento },
+                    { 
+                        model: Entrenamiento,
+                        include: [{
+                            model: MediaEntrenamiento,
+                            include: [{ model: Documento }]
+                        }]                        
+                    },
                     { model: EstadoSesion },
                     { model: TipoSesion }] 
             });

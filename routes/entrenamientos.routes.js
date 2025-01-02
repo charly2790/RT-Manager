@@ -1,4 +1,4 @@
-import { create, patch, test } from '../controllers/entrenamientos.controller.js';
+import { create, patch } from '../controllers/entrenamientos.controller.js';
 import { Router } from 'express';
 import { verifyToken } from '../middlewares/verifyToken.middleware.js';
 import { verifyPermisos } from '../middlewares/rbac.middleware.js';
@@ -18,7 +18,7 @@ router.post(
         FOLDERS.TRAINING, 
         false, 
         STORAGE_TYPES.CLOUDINARY), 
-        test);
+        create);
 router.patch('/entrenamientos/:idEntrenamiento', verifyToken, verifyPermisos('ENTRENAMIENTO_READ'), upload().none(), patch);
 
 export default router;

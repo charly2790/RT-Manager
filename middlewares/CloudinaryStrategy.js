@@ -54,10 +54,6 @@ export class CloudinaryStrategy extends StorageStrategy {
                 if (err) {
                     return res.status(400).json({ message: err.message });
                 }
-                console.log('req.body--->', req.body);
-                console.log('req.files--->', req.files);
-                console.log('Keys--->', Object.keys(req));
-
                 
                 if(!_.isNil(req.files) && req.files.length > 0){
 
@@ -66,9 +62,7 @@ export class CloudinaryStrategy extends StorageStrategy {
                     req.files.forEach(async file => {
                         let newDocumento = await Documento.create({
                             link: file.path,
-                            idCategoria: 1,
-                            fechaCreacion: new Date(),
-                            fechaUltimaModificacion: new Date(),                            
+                            idCategoria: 1,                                                        
                         })
                         newDocuments.push(newDocumento);
                     });
