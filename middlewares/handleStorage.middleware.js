@@ -1,7 +1,6 @@
 import { CloudinaryStrategy } from "./CloudinaryStrategy.js";
 import { StorageContext } from "./StorageContext.js";
 import { STORAGE_TYPES } from "./types/types.js"
-import { Auto } from "./Auto.js";
 
 export const handleStorage = (
     allowed_formats,
