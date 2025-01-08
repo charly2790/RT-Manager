@@ -2,19 +2,25 @@ import { config } from "./config.js";
 import Sequelize from 'sequelize';
 import { createClient } from 'redis';
 
-const { 
-    database, 
-    username, 
-    password, 
-    host, 
-    dialect, 
+const {
+    database,
+    username,
+    password,
+    host,
+    port,
+    ssl,
+    ca,
+    dialect,
     appPort,
-    redisUrlKey, 
-    redisHost, 
-    redisPort, 
-    redisUser, 
-    redisPassword, 
+    redisUrlKey,
+    redisHost,
+    redisPort,
+    redisUser,
+    redisPassword,
     redisIndexDb } = config;
+
+    console.log('ssl--->',ssl);
+    console.log('ca-->', ca);
 
 export const sequelize = new Sequelize({
     database,
@@ -22,19 +28,19 @@ export const sequelize = new Sequelize({
     password,
     host,
     dialect,
-    appPort,
-    dialectOptions: {
+    port,
+    dialectOptions: ssl ? {
         ssl: {
-          require: false,
-          rejectUnauthorized: false,
+            require: true,
+            rejectUnauthorized: false,
+            ca,
         },
-      },
-});
+    }:{}});
 
-let credentialsString = redisUser?`${redisUser}:${redisPassword}@`:'';
+let credentialsString = redisUser ? `${redisUser}:${redisPassword}@` : '';
 let redisStrCon = `${redisUrlKey}://${credentialsString}${redisHost}:${redisPort}/${redisIndexDb}`;
 
-export const redisClient = createClient({ url: redisStrCon});
+export const redisClient = createClient({ url: redisStrCon });
 
 export const dbsConnection = () => {
     sequelize.authenticate()
@@ -45,7 +51,7 @@ export const dbsConnection = () => {
                 .then(() => {
                     console.log("Base de datos redis: 🆗");
 
-                    sequelize.sync({force: false})
+                    sequelize.sync({ force: false })
                         .then(() => {
                             console.log("Sincronización base de datos postgres: 🆗");
                         })
