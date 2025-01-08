@@ -23,7 +23,12 @@ dbsConnection();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://rtmanager.onrender.com',
+        'http://localhost:5173'
+    ]
+}));
 
 //Routes
 app.use(entrenamientosRoutes);
