@@ -29,4 +29,5 @@ export const config = {
         cloudinaryName: process.env.CLOUDINARY_NAME,
         cloudinaryAPIKey: process.env.CLOUDINARY_API_KEY,
         cloudinaryAPISecret: process.env.CLOUDINARY_API_SECRET, 
+        pexelsAPIKey: process.env.PEXELS_API_KEY
 }

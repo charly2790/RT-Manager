@@ -7,15 +7,16 @@ import equiposRoutes from './routes/equipos.routes.js';
 import estadosSesionesRoutes from './routes/estadosSesion.routes.js';
 import express from 'express';
 import methodOverride from 'method-override';
+import perfilRoutes from './routes/perfil.routes.js'
 import permisosRolRoutes from './routes/permisosRol.routes.js';
 import permisosRoutes from './routes/permisos.routes.js';
 import rolesRoutes from './routes/roles.routes.js';
 import sesionesEntrenamientoRoutes from './routes/sesionesEntrenamiento.routes.js';
 import sesionesRoutes from './routes/sesiones.routes.js';
 import suscripcionesRoutes from './routes/suscripciones.routes.js';
+import thirdPartyApiRoutes from './routes/thirdPartyApi.routes.js';
 import tiposSesionRoutes from './routes/tiposSesion.routes.js';
 import usuarioRoutes from './routes/usuarios.routes.js';
-import perfilRoutes from './routes/perfil.routes.js'
 // import { models } from './models/index.js';
 const app = express();
 
@@ -43,6 +44,7 @@ app.use(suscripcionesRoutes);
 app.use(tiposSesionRoutes);
 app.use(usuarioRoutes);
 app.use(perfilRoutes);
+app.use(thirdPartyApiRoutes);
 
 
 const responderPeticion = (req, res) => {

@@ -5,6 +5,11 @@ import utc from "dayjs/plugin/utc.js";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+export const PEXELS = {
+    NEXT_PAGE: 'next_page',
+    QUERY: 'query',
+    TOTAL_RESULTS: 'total_results',
+}
 
 const TIMEZONES = {
     ARG: 'America/Argentina/Buenos_Aires',
