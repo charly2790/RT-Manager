@@ -7,94 +7,6 @@ import { formatToLocalTime } from "../helpers/Utils.js";
 import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
 import Documento from "../models/Documento.js";
 
-
-/* export const test = async (req, res) => {
-
-    try {
-        console.log('A ver si se seteo el auto?');
-        console.log('req.auto--->', req.auto);        
-        console.log('---------------------------');
-        
-        
-        const {
-            comentario,
-            distancia,
-            idSesion,
-            idUserLogged,
-            link,
-            rpe,
-            tiempoNeto,
-            tiempoTotal,
-            archivos
-        } = req.body;
-        
-        //console.log('archivos-->', archivos);
-        //console.log('req.archivos-->', req.files);
-        //console.log('req keys-->', Object.keys(req));
-        
-        if (!req.rol) {
-            throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.ROLE_NOT_PROVIDED_ERROR)
-        }
-        return;
-
-
-        const { nombre: rolUsuario } = req.rol;
-
-        let data = {};
-
-        if (rolUsuario === 'EQUIPO_MEMBER') {
-            console.log('idSesion ---> ', idSesion);
-            if (!idSesion || !link) {
-                throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)
-            }
-
-            data = {
-                comentario,
-                idSesion,
-                link,
-            }
-
-        } else if (req.rol === 'EQUIPO_ADMIN') {
-            if (!idSesion || !distancia || !tiempoTotalSesion || !tiempoNetoSesion || !rpe) {
-                throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)
-            }
-
-            data = {
-                comentario,
-                distancia,
-                idSesion,
-                link: link ? link : undefined,
-                rpe,
-                tiempoNeto: new Date(tiempoNeto).toTimeString().split(' ')[0],
-                tiempoTotal: new Date(tiempoTotal).toTimeString().split(' ')[0],
-                usuarioCreador: idUserLogged,
-                usuarioModificador: idUserLogged,
-            }
-        }
-        let newEntrenamiento = await Entrenamiento.create(data);
-
-        if (!newEntrenamiento) {
-            throw ErrorFactory.createError(errorTypes.DATABASE_ERROR, errorMessages.INSERT_ERROR);
-        }
-
-        return res.status(200).json(newEntrenamiento);
-    } catch (error) {
-
-        let STATUS_CODE = 500;
-        let MESSAGE = 'Error interno del servidor';
-
-        if (error.name) {
-            STATUS_CODE = error.statusCode;
-            MESSAGE = error.message;
-        }
-        console.log(STATUS_CODE, MESSAGE);
-
-        return res.status(STATUS_CODE).json({ message: MESSAGE });
-    }
-} */
-
-
-
 export const create = async (req, res) => {
 
     try {
@@ -114,16 +26,13 @@ export const create = async (req, res) => {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.ROLE_NOT_PROVIDED_ERROR)
         }
 
-        //console.log('archivos-->', archivos);
-        //console.log('req.body-->', JSON.stringify(req.body.archivos));        
-
         const { nombre: rolUsuario } = req.rol;
 
         let data = {};
 
-        if (rolUsuario === 'EQUIPO_MEMBER') {
-            console.log('idSesion ---> ', idSesion);
-            if (!idSesion || !link) {
+        if (rolUsuario === 'EQUIPO_MEMBER') {            
+            //if (!idSesion || !link) {
+            if(!idSesion){ //ANALIZAR
                 throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errorMessages.MISSING_FIELDS)
             }
 
@@ -173,9 +82,7 @@ export const create = async (req, res) => {
 
             if(!mediaCreated){
                 throw ErrorFactory.createError(errorTypes.DATABASE_ERROR, errorMessages.INSERT_ERROR_MEDIA);
-            }
-
-            console.log('mediaCreated-->', mediaCreated);
+            }            
 
             let allMedia = await MediaEntrenamiento.findAll({
                 where: {
@@ -184,9 +91,7 @@ export const create = async (req, res) => {
                 include: {
                     model: Documento,
                 }
-            });
-
-            console.log('allMedia-->', allMedia);
+            });            
 
             newEntrenamiento.media = allMedia;            
         }
@@ -208,9 +113,7 @@ export const create = async (req, res) => {
     }
 }
 
-export const patch = async (req, res) => {
-    
-    console.log('Entra al patch---->', req.body);
+export const patch = async (req, res) => {        
 
     try {
         const { idEntrenamiento } = req.params;
@@ -240,13 +143,9 @@ export const patch = async (req, res) => {
 
         if (!_.isNil(updatedFields.tiempoTotal)) {
             updatedFields.tiempoTotal = formatToLocalTime(updatedFields.tiempoTotal);
-        }
-
-        console.log('updatedFields-->', updatedFields);        
+        }        
         
-        await entrenamiento.update({ ...updatedFields });
-        
-        console.log('luego del entrenamiento update()');
+        await entrenamiento.update({ ...updatedFields });            
 
         return res.status(200).json({
             message: 'Entrenamiento Actualizado correctamente',
