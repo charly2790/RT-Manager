@@ -49,7 +49,7 @@ export const getImage = async (req, res) => {
 
         await redisClient.set(PEXELS.TOTAL_RESULTS, total_results);
 
-        return res.status(200).json({ url: picture.src.original });
+        return res.status(200).json({ url: picture.src.large });
 
     } catch (error) {
         console.error(`Error al obtener key de redis:\n ${error.message}`);
