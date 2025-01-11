@@ -1,6 +1,7 @@
 import json from "body-parser";
-import Usuario from "../models/Usuario.js";
+import Perfil from "../models/Perfil.js";
 import Suscripcion from "../models/Suscripcion.js";
+import Usuario from "../models/Usuario.js";
 
 
 export const create = async (req, res, next) => {
@@ -39,7 +40,7 @@ export const getUsuarios = async (req, res) => {
     let usuarios = [];
 
     try {
-        usuarios = await Usuario.findAll({ include: { model: Suscripcion, where: { idEquipo, activo: true }} });
+        usuarios = await Usuario.findAll({ include: [{ model: Perfil},{ model: Suscripcion, where: { idEquipo, activo: true }}] });
     } catch (error) {
         console.log(`Error al recuperar usuarios: \n ${error}`);
         return res.status(500).json({message: "Internal server error"});
