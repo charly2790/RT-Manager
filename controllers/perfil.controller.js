@@ -121,6 +121,7 @@ export const update = async (req, res) => {
     try {
         perfil.update({ ...updatedFields });
         perfil.save();
+        res.statusMessage = 'OK';
         return res.status(200).json({ message: 'Perfil Actualizado correctamente', perfil });
     } catch (error) {
         console.error(`Error al buscar suscripción:\n ${error}`);
