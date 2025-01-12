@@ -88,7 +88,7 @@ export const update = async (req, res) => {
 
     delete updatedFields.idUsuario;
 
-    const perfil = await Perfil.findOne({ idUsuario: userId });
+    const perfil = await Perfil.findOne({ where: {idUsuario: userId }});
 
     if (!perfil) return res.status(200).json({ message: "Perfil no encontrado" });
 
