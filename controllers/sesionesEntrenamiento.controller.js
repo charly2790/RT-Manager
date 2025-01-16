@@ -145,20 +145,22 @@ export const updateStatus = async(req, res) =>{
 
         console.log('El nuevo estado será--->', newIdStatus);
 
-        const sesionUpdated = SesionEntrenamiento.update({
+        const sesionUpdated = await SesionEntrenamiento.update({
             idEstado: newIdStatus
         },
         {
-            where: {
-                idSesion
-            }
+            where: { idSesion },
+            returning: true //p/ retornar objeto actualiozado (solo postgres)
         })
 
         if(!sesionUpdated){
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'No se ha podido actualizar el estado de la sesion de entrenamiento')
         }
+
+        const [ affectedRows, sesionEntrenamiento ] = sesionUpdated;        
         
-        return res.status(200).json(sesionUpdated)
+        return res.status(200).json({ message: 'Entrenamiento cargado con éxito', result: { affectedRows, sesionEntrenamiento }});
+
     } catch (error) {
         
         let STATUS_CODE = 500;

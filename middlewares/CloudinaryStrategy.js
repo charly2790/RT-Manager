@@ -54,9 +54,8 @@ export class CloudinaryStrategy extends StorageStrategy {
                 if (err) {
                     return res.status(400).json({ message: err.message });
                 }
-                
-                if(!_.isNil(req.files) && req.files.length > 0){
-
+                                
+                if(!_.isNil(req.files) && req.files.length >= 0){                    
                     let newDocuments = [];
                     
                     req.files.forEach(async file => {
