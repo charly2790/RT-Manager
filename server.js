@@ -27,6 +27,7 @@ app.use(methodOverride('_method'));
 app.use(cors({
     origin: [
         'https://rtmanager.onrender.com',
+        'https://rt-manager-backend.onrender.com/randomImage?query=marathon',
         'http://localhost:5173'
     ]
 }));
