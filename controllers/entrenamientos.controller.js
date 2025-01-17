@@ -144,11 +144,11 @@ export const patch = async (req, res) => {
             updatedFields.tiempoTotal = formatToLocalTime(updatedFields.tiempoTotal);
         }
 
-        await entrenamiento.update({ ...updatedFields });
+        const affectedRows = await entrenamiento.update({ ...updatedFields });        
 
         return res.status(200).json({
             message: 'Entrenamiento Actualizado correctamente',
-            entrenamiento
+            result: { affectedRows }
         })
 
     } catch (error) {
