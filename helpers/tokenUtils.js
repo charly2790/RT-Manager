@@ -38,3 +38,16 @@ export const getToken = async (key) => {
 
     return tokenFound;
 }
+
+export const deleteToken = async (key) => {
+    
+    let result;
+
+    try {
+        result = await redisClient.del(key)
+    } catch (error) {
+        console.log('Error al intentar borrar key de redis: ', error.message);
+    }
+
+    return result;
+}

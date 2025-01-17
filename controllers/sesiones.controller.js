@@ -1,5 +1,6 @@
+import _ from "lodash"
 import { config } from "../config/config.js";
-import { generateToken } from "../helpers/tokenUtils.js";
+import { generateToken, getPayload, getToken, deleteToken } from "../helpers/tokenUtils.js";
 import { redisClient } from "../config/database.js";
 import Perfil from "../models/Perfil.js"
 import Rol from "../models/Rol.js";
@@ -64,8 +65,11 @@ export const login = async (req, res) => {
     }
     
     if(token) {
-        console.log(`Token encontrado en redis`);
-        return res.status(200).json({ userLogged });
+        console.log(`#Token activo para el usuario logueado. Se regenerará el mismo`);
+        const result = await deleteToken(key);
+        if(!_.isNil(result) && result > 0) {
+            console.log('#Token eliminado')
+        }
     }
     
     token = generateToken({ 
@@ -84,12 +88,47 @@ export const login = async (req, res) => {
     try {
         const saveResultRedis = await redisClient.set(key,token,{'EX': tokenTTL});
         userLogged.token = token;
-        console.log(`Nuevos datos almacenados en redis ${saveResultRedis}`);
+        console.log(`#Nuevos datos almacenados en redis ${saveResultRedis}`);
         return res.status(200).json({ userLogged });
 
     } catch (error) {
-        console.error(`Error al guardar key en redis:\n ${error}`);
+        console.error(`#Error al guardar key en redis:\n ${error}`);
         return res.status(500).json({ message: "Internal server error" });
     }
 
+}
+
+export const logout = async (req, res) => {
+    const header = req.header("Authorization") || "";
+    const token = header.split(" ")[1];
+
+    console.log(`token ${token}`);
+    if (!token) {
+        console.error("Token no enviado en la peticion");        
+    }
+
+    const payload = getPayload(token);
+
+    if(!payload){
+        console.warn("Token no valido");        
+    }
+
+    const key = `${payload.idEquipo}_${payload.email}`;
+
+    const tokenFound = await getToken(key);
+    console.log(`token found ${tokenFound}`);
+
+    if(!tokenFound) {
+        console.warn(`Sesión vencida para el usuario ${payload.email}`);        
+    }
+
+    if( tokenFound !== token){
+        console.warn(`Token enviado distinto del token activo para el usuario ${payload.email}`);        
+    }
+
+    let result = await deleteToken(key);
+
+    if(!_.isNil(result) && result > 0){
+        console.log('#Token eliminado correctamente');
+    }
 }
