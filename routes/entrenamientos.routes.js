@@ -7,26 +7,38 @@ import { upload } from '../middlewares/fileUpload.middleware.js';
 import { validationRules } from '../rules/entrenamiento.rules.js';
 import { verifyPermisos } from '../middlewares/rbac.middleware.js';
 import { verifyToken } from '../middlewares/verifyToken.middleware.js';
-import { create as createMedia} from '../controllers/mediaEntrenamiento.controller.js';
+import { create as createMedia } from '../controllers/mediaEntrenamiento.controller.js';
 
 const router = Router();
 
-router.post( 
-    '/entrenamientos', 
+router.post(
+    '/entrenamientos',
     verifyToken,
     verifyPermisos('ENTRENAMIENTO_READ'),
     handleStorage(
-        ['jpg', 'png', 'jpeg', 'gif'], 
-        'archivos', 
-        FOLDERS.TRAINING, 
-        false, 
+        ['jpg', 'png', 'jpeg', 'gif'],
+        'archivos',
+        FOLDERS.TRAINING,
+        false,
         STORAGE_TYPES.CLOUDINARY),
-        validationRules, 
-        create,
-        createMedia,
-        updateStatus
-    );
-router.patch('/entrenamientos/:idEntrenamiento', verifyToken, verifyPermisos('ENTRENAMIENTO_READ'), upload().none(), patch);
+    validationRules,
+    create,
+    createMedia,
+    updateStatus
+);
+
+router.patch('/entrenamientos/:idEntrenamiento',
+    verifyToken,
+    verifyPermisos('ENTRENAMIENTO_READ'),
+    handleStorage(
+        ['jpg', 'png', 'jpeg', 'gif'],
+        'archivos',
+        FOLDERS.TRAINING,
+        false,
+        STORAGE_TYPES.CLOUDINARY),
+    patch,
+    createMedia,
+    updateStatus);
 
 export default router;
 

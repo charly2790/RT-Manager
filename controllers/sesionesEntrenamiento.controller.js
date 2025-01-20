@@ -1,13 +1,14 @@
 import _ from "lodash";
 import { completarFecha } from "../helpers/Utils.js";
-import Entrenamiento from "../models/Entrenamiento.js";
-import EstadoSesion from "../models/EstadoSesion.js";
-import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
-import TipoSesion from "../models/TipoSesion.js";
 import { ErrorFactory } from "../utils/ErrorFactory.js";
 import { errorTypes } from "../utils/ErrorTypes.js";
-import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
+import { feedbackMessages } from "../utils/FeedbackMessages.js";
 import Documento from "../models/Documento.js";
+import Entrenamiento from "../models/Entrenamiento.js";
+import EstadoSesion from "../models/EstadoSesion.js";
+import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
+import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
+import TipoSesion from "../models/TipoSesion.js";
 
 
 const validarSesiones = (sesiones) => {
@@ -150,9 +151,9 @@ export const updateStatus = async(req, res) =>{
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'No se ha podido actualizar el estado de la sesion de entrenamiento')
         }
 
-        const [ affectedRows, sesionEntrenamiento ] = sesionUpdated;        
+        const [ affectedRows, sesionEntrenamiento ] = sesionUpdated;                
         
-        return res.status(200).json({ message: 'Entrenamiento cargado con éxito', result: { affectedRows, sesionEntrenamiento }});
+        return res.status(200).json({ message: req.path === '/entrenamientos' ? feedbackMessages.CREATE_OK : feedbackMessages.UPDATE_OK, result: { affectedRows, sesionEntrenamiento }});
 
     } catch (error) {
         

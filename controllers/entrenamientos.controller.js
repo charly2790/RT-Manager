@@ -62,7 +62,7 @@ export const create = async (req, res, next) => {
         req.entrenamiento = newEntrenamiento;
         
         if(req.path === '/entrenamientos' && req.method === 'POST'){
-            next();
+            return next();
         }else{
             return res.status(200).json({ message: 'Entrenamiento cargado con éxito', entrenamiento: newEntrenamiento });
         }
@@ -83,7 +83,7 @@ export const create = async (req, res, next) => {
     }
 }
 
-export const patch = async (req, res) => {
+export const patch = async (req, res, next) => {
 
     try {
         const { idEntrenamiento } = req.params;
@@ -115,14 +115,27 @@ export const patch = async (req, res) => {
             updatedFields.tiempoTotal = formatToLocalTime(updatedFields.tiempoTotal);
         }
 
-        const affectedRows = await entrenamiento.update({ ...updatedFields });        
+        const entrenamientoUpdated = await entrenamiento.update({ ...updatedFields });
 
-        return res.status(200).json({
-            message: 'Entrenamiento Actualizado correctamente',
-            result: { affectedRows }
-        })
+        if(_.isNil(entrenamientoUpdated)){
+            throw ErrorFactory.createError(errorTypes.DATABASE_ERROR, 'Error al actualizar el entrenamiento');
+        }
+
+        req.entrenamiento = entrenamientoUpdated;
+
+        if(req.path === `/entrenamientos/${idEntrenamiento}`){
+            return next();
+        }else{
+            return res.status(200).json({
+                message: 'Entrenamiento Actualizado correctamente',
+                result: { affectedRows }
+            })
+        }
+        
 
     } catch (error) {
+
+        console.log('error message-->', error.message);
 
         let STATUS_CODE = 500;
         let MESSAGE = 'Error interno del servidor';
