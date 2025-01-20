@@ -20,7 +20,7 @@ export const create = async (req, res, next) => {
 
     try {
 
-        const errors = validationResult(req);
+        const errors = validationResult(req);        
 
         if (!errors.isEmpty()) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errors.array().map(error => error.msg)[0]);
@@ -57,38 +57,9 @@ export const create = async (req, res, next) => {
 
         if (!newEntrenamiento) {
             throw ErrorFactory.createError(errorTypes.DATABASE_ERROR, errorMessages.INSERT_ERROR);
-        }
+        }        
 
-        if (!_.isNil(req.documentos) && req.documentos.length > 0) {
-
-            let { idEntrenamiento } = newEntrenamiento;
-
-            let newMedia = req.documentos.map(documento => {
-
-                let { idDocumento } = documento;
-                return {
-                    idEntrenamiento,
-                    idDocumento,
-                }
-            });
-
-            let mediaCreated = await MediaEntrenamiento.bulkCreate(newMedia);
-
-            if (!mediaCreated) {
-                throw ErrorFactory.createError(errorTypes.DATABASE_ERROR, errorMessages.INSERT_ERROR_MEDIA);
-            }
-
-            let allMedia = await MediaEntrenamiento.findAll({
-                where: {
-                    idEntrenamiento,
-                },
-                include: {
-                    model: Documento,
-                }
-            });
-
-            newEntrenamiento.media = allMedia;
-        }
+        req.entrenamiento = newEntrenamiento;
         
         if(req.path === '/entrenamientos' && req.method === 'POST'){
             next();

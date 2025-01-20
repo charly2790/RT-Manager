@@ -33,7 +33,7 @@ export const handleStorage = (
                 
         const storageContext = new StorageContext(strategy);
         storageContext.setSettings(settings);
-        storageContext.upload(req, res, next);
+        await storageContext.upload(req, res, next);
     }
     
 

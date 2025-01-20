@@ -7,6 +7,7 @@ import { upload } from '../middlewares/fileUpload.middleware.js';
 import { validationRules } from '../rules/entrenamiento.rules.js';
 import { verifyPermisos } from '../middlewares/rbac.middleware.js';
 import { verifyToken } from '../middlewares/verifyToken.middleware.js';
+import { create as createMedia} from '../controllers/mediaEntrenamiento.controller.js';
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.post(
         STORAGE_TYPES.CLOUDINARY),
         validationRules, 
         create,
+        createMedia,
         updateStatus
     );
 router.patch('/entrenamientos/:idEntrenamiento', verifyToken, verifyPermisos('ENTRENAMIENTO_READ'), upload().none(), patch);

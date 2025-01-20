@@ -115,18 +115,13 @@ export const updateStatus = async(req, res) =>{
 
         if( !idSesion || !rol ){
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'Parámetros faltantes o no validos');
-        }
-        
-        console.log('req.rol--->', rol);
-        console.log('req.body---->', idSesion);
+        }                
     
         const sesion = await SesionEntrenamiento.findOne({
             where :{
                 idSesion
             }
-        })
-    
-        console.log('Sesion encontrada--->', sesion);
+        })        
     
         if(_.isNil(sesion)){
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, `No se ha encontrado una sesion de entrenamiento asociada al id ${idSesion}`)
@@ -141,9 +136,7 @@ export const updateStatus = async(req, res) =>{
             case 'EQUIPO_ADMIN':
                 newIdStatus = 4; //VALIDADA
                 break;            
-        }
-
-        console.log('El nuevo estado será--->', newIdStatus);
+        }        
 
         const sesionUpdated = await SesionEntrenamiento.update({
             idEstado: newIdStatus

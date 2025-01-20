@@ -22,7 +22,7 @@ export class CloudinaryStrategy extends StorageStrategy {
         return this.settings;
     }
 
-    upload(req, res, next){
+    upload = (req, res, next) =>{
 
         const {folder, allowed_formats, fieldName, isSingle} = this.getSettings();
         
@@ -49,24 +49,22 @@ export class CloudinaryStrategy extends StorageStrategy {
                 uploadMiddleware = multer({ storage }).array(fieldName,4);
             }
 
-            uploadMiddleware(req, res, (err) => {
+            uploadMiddleware(req, res, async (err) => {
 
                 if (err) {
                     return res.status(400).json({ message: err.message });
                 }
                                 
                 if(!_.isNil(req.files) && req.files.length >= 0){                    
-                    let newDocuments = [];
-                    
-                    req.files.forEach(async file => {
-                        let newDocumento = await Documento.create({
-                            link: file.path,
-                            idCategoria: 1,                                                        
-                        })
-                        newDocuments.push(newDocumento);
-                    });
+                    let newDocuments = req.files.map( file => ({ link: file.path, idCategoria: 1}));
 
-                    req.documentos = newDocuments;
+                    const newDocumentRecords = await Documento.bulkCreate(
+                        newDocuments, 
+                        {
+                            returning: true
+                        });
+                    req.documentos = newDocumentRecords;   
+                    console.log('req.documentos--->', req.documentos);
                 }
                 next();
             });
