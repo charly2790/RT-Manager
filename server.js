@@ -1,4 +1,5 @@
 import { config } from './config/config.js';
+import { dbBackupCron } from './jobs/dbBackup.cron.js';
 import { dbsConnection } from './config/database.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -21,6 +22,7 @@ import usuarioRoutes from './routes/usuarios.routes.js';
 const app = express();
 
 dbsConnection();
+dbBackupCron();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));

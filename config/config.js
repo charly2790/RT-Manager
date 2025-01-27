@@ -17,6 +17,7 @@ export const config = {
         host: process.env.DB_HOST,
         ssl: parseInt(process.env.DB_SSL) === 1 ? true : false,
         ca: parseInt(process.env.DB_SSL) === 1 ? fs.readFileSync(__dirname + '/ca.pem').toString() : null,
+        backupMode:process.env.BACKUP_MODE,
         appPort: process.env.APP_PORT,
         secret: process.env.SECRET,
         redisUrlKey: process.env.REDIS_URLKEY,
