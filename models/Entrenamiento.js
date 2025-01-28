@@ -11,6 +11,9 @@ const Entrenamiento = sequelize.define('Entrenamiento', {
     idSesion:{
         type: DataTypes.INTEGER
     },
+    fechaEntrenamiento:{
+        type: DataTypes.DATE
+    },
     distancia: {
         type: DataTypes.FLOAT
     },
@@ -27,6 +30,9 @@ const Entrenamiento = sequelize.define('Entrenamiento', {
         type: DataTypes.TEXT
     },
     comentario:{
+        type: DataTypes.TEXT,
+    },
+    entrenamientoRealizado:{
         type: DataTypes.TEXT,
     },
     usuarioCreador:{

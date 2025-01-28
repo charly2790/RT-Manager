@@ -24,7 +24,7 @@ export const create = async (req, res, next) => {
 
         if (!errors.isEmpty()) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, errors.array().map(error => error.msg)[0]);
-        }
+        }        
 
         const {
             comentario = null,
@@ -35,6 +35,8 @@ export const create = async (req, res, next) => {
             rpe = null,
             tiempoNeto,
             tiempoTotal,
+            fechaEntrenamiento,
+            entrenamientoRealizado
         } = req.body;
 
         const { nombre: rolUsuario } = req.rol;
@@ -44,6 +46,8 @@ export const create = async (req, res, next) => {
             idSesion,
             link,
             rpe,
+            fechaEntrenamiento,
+            entrenamientoRealizado,            
             ...(rolUsuario === 'EQUIPO_ADMIN') && {            
                 distancia,
                 tiempoNeto: new Date(tiempoNeto).toTimeString().split(' ')[0],
