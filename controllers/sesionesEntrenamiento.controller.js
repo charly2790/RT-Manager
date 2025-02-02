@@ -3,13 +3,18 @@ import { completarFecha } from "../helpers/Utils.js";
 import { ErrorFactory } from "../utils/ErrorFactory.js";
 import { errorTypes } from "../utils/ErrorTypes.js";
 import { feedbackMessages } from "../utils/FeedbackMessages.js";
+import dayjs from "dayjs";
+import dayOfYear from "dayjs/plugin/dayOfYear.js"
 import Documento from "../models/Documento.js";
 import Entrenamiento from "../models/Entrenamiento.js";
 import EstadoSesion from "../models/EstadoSesion.js";
 import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 import TipoSesion from "../models/TipoSesion.js";
+import Suscripcion from "../models/Suscripcion.js";
+import { Op } from "sequelize";
 
+dayjs.extend(dayOfYear);
 
 const validarSesiones = (sesiones) => {
 
@@ -26,7 +31,7 @@ const validarSesiones = (sesiones) => {
             result.valid = false;
             result.message.push(`Fecha: ${fechaSesion} - Objetivo: ${Objetivo} | Ya existe una sesión para esta suscripción`);
         }
-        
+
         return result;
     }, { valid: true, message: [] })
 
@@ -54,11 +59,11 @@ export const create = async (req, res) => {
         return res.status(400).json(sesionesValidas.message);
     }
 
-    let data = sesiones.map(sesion =>({
+    let data = sesiones.map(sesion => ({
         ...sesion,
         idUsuarioCreador: idUserLogged,
-        idUsuarioModificador:idUserLogged
-    }))    
+        idUsuarioModificador: idUserLogged
+    }))
 
     try {
         let status = await SesionEntrenamiento.bulkCreate(data);
@@ -76,31 +81,31 @@ export const getById = async (req, res) => {
 
     try {
         let sesiones = await SesionEntrenamiento.findAll(
-            { 
+            {
                 where: { idSuscripcion },
                 include: [
-                    { 
+                    {
                         model: Entrenamiento,
                         include: [{
                             model: MediaEntrenamiento,
                             include: [{ model: Documento }]
-                        }]                        
+                        }]
                     },
                     { model: EstadoSesion },
-                    { model: TipoSesion }] 
+                    { model: TipoSesion }]
             });
 
-        if (sesiones.length > 0){
-            sesiones = sesiones.map( sesion => {
-                if( !_.isEmpty(sesion.Entrenamiento)){                    
-                    const { tiempoNeto, tiempoTotal } = sesion.Entrenamiento;                    
+        if (sesiones.length > 0) {
+            sesiones = sesiones.map(sesion => {
+                if (!_.isEmpty(sesion.Entrenamiento)) {
+                    const { tiempoNeto, tiempoTotal } = sesion.Entrenamiento;
                     sesion.Entrenamiento.tiempoNeto = completarFecha(tiempoNeto);
                     sesion.Entrenamiento.tiempoTotal = completarFecha(tiempoTotal);
                 }
                 return sesion;
-            })            
+            })
         }
-        
+
         return res.status(200).json(sesiones)
     } catch (error) {
         console.log(`Error al recuperar sesiones de entrenamiento \n ${error}`);
@@ -108,55 +113,55 @@ export const getById = async (req, res) => {
     }
 }
 
-export const updateStatus = async(req, res) =>{    
+export const updateStatus = async (req, res) => {
 
     try {
         const { idSesion } = req.body;
         const { rol } = req;
 
-        if( !idSesion || !rol ){
+        if (!idSesion || !rol) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'Parámetros faltantes o no validos');
-        }                
-    
+        }
+
         const sesion = await SesionEntrenamiento.findOne({
-            where :{
+            where: {
                 idSesion
             }
-        })        
-    
-        if(_.isNil(sesion)){
+        })
+
+        if (_.isNil(sesion)) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, `No se ha encontrado una sesion de entrenamiento asociada al id ${idSesion}`)
         }
 
         let newIdStatus = sesion.idEstado;
-        
-        switch(rol.nombre){
+
+        switch (rol.nombre) {
             case 'EQUIPO_MEMBER':
                 newIdStatus = 2; //ENVIADA
                 break;
             case 'EQUIPO_ADMIN':
                 newIdStatus = 4; //VALIDADA
-                break;            
-        }        
+                break;
+        }
 
         const sesionUpdated = await SesionEntrenamiento.update({
             idEstado: newIdStatus
         },
-        {
-            where: { idSesion },
-            returning: true //p/ retornar objeto actualiozado (solo postgres)
-        })
+            {
+                where: { idSesion },
+                returning: true //p/ retornar objeto actualiozado (solo postgres)
+            })
 
-        if(!sesionUpdated){
+        if (!sesionUpdated) {
             throw ErrorFactory.createError(errorTypes.VALIDATION_ERROR, 'No se ha podido actualizar el estado de la sesion de entrenamiento')
         }
 
-        const [ affectedRows, sesionEntrenamiento ] = sesionUpdated;                
-        
-        return res.status(200).json({ message: req.path === '/entrenamientos' ? feedbackMessages.CREATE_OK : feedbackMessages.UPDATE_OK, result: { affectedRows, sesionEntrenamiento }});
+        const [affectedRows, sesionEntrenamiento] = sesionUpdated;
+
+        return res.status(200).json({ message: req.path === '/entrenamientos' ? feedbackMessages.CREATE_OK : feedbackMessages.UPDATE_OK, result: { affectedRows, sesionEntrenamiento } });
 
     } catch (error) {
-        
+
         let STATUS_CODE = 500;
         let MESSAGE = 'Error interno del servidor';
 
@@ -169,6 +174,85 @@ export const updateStatus = async(req, res) =>{
 
         return res.status(STATUS_CODE).json({ message: MESSAGE });
     }
+
+
+}
+
+export const getResumen = async (req, res) => {
+
+    //¿a que usuario?
+    //¿Para que año?
+    const { idSuscripcion } = req.params;
+    const { idEquipo } = req.body;
+
+    //Determinar 1er y último día del año
+    console.log('idEquipo,idSuscripcion', idEquipo, '-', idSuscripcion);
+
+    try {
+        const where = {
+            idSuscripcion,            
+        }        
+
+        let sesiones = await SesionEntrenamiento.findAll({
+            where,            
+            include: [{
+                model: Entrenamiento,
+                where: {
+                    idEntrenamiento: { [Op.ne]: null }
+                }
+            }, {
+                model: Suscripcion,
+                where: {
+                    idSuscripcion,
+                    idEquipo,
+                    activo: true
+                },
+            }
+            ]
+        })
+
+        //inicio del año running
+        console.log('Filtro | inicio año runner-->',dayjs().startOf('year').day(0));
+        console.log('Filtro | Fin año runnner-->',dayjs().endOf('year').day(6));
+
+        return res.status(200).json({sesiones});
+
+    } catch (error) {
+        console.log(error.message);
+        let STATUS_CODE = 500;
+        let MESSAGE = 'Error interno del servidor';
+
+        switch (error.name) {
+            case errorTypes.VALIDATION_ERROR:
+                STATUS_CODE = error.statusCode;
+                MESSAGE = error.message;
+                break;
+        }
+
+        return res.status(STATUS_CODE).json({ message: MESSAGE });
+    }
+
+
+
+
+    return res.status(200).json({ message: "Acá devolveriamos los datos" });
+
+
+    /*   try {
+          let sesiones = SesionEntrenamiento.findAll({
+              where: { 
+                  idSuscripcion
+  
+               },
+              include:[{
+                  model: Entrenamiento,                
+              }]
+          })
+      } catch (error) {
+          
+      } */
+
+
 
 
 }
