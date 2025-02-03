@@ -1,6 +1,6 @@
 import { DataBaseError } from "./DataBaseError.js";
 import { errorTypes } from "./ErrorTypes.js";
-import { ValidationError } from "./ValidationError.js";
+import { NoDataFoundError, ValidationError } from "./ValidationError.js";
 
 export class ErrorFactory {
 
@@ -10,6 +10,8 @@ export class ErrorFactory {
                 return new ValidationError(message);
             case errorTypes.DATABASE_ERROR:
                 return new DataBaseError(message);
+            case errorTypes.NO_DATA_ERROR:
+                return new NoDataFoundError(message);
         }
     }
 }
