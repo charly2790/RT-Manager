@@ -24,6 +24,10 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
         allowNull: false,
 
     },
+    isoWeekYear:{
+        type: DataTypes.VIRTUAL,
+        allowNull: false,
+    },
     Objetivo:{
         type: DataTypes.TEXT('medium')
     },
@@ -58,9 +62,11 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
             if(_.isArray(sesiones)){
                 sesiones.forEach(sesion =>{
                     sesion.isoWeek = dayjs(sesion.fechaSesion).isoWeek();
+                    sesion.isoWeekYear = dayjs(sesion.fechaSesion).isoWeekYear();
                 })
             }else{
                 sesiones.isoWeek = dayjs(sesiones.fechaSesion).isoWeek();
+                sesiones.isoWeekYear = dayjs(sesiones.fechaSesion).isoWeekYear();
             }
         }
     }
