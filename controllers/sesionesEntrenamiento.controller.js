@@ -5,6 +5,7 @@ import { errorTypes } from "../utils/ErrorTypes.js";
 import { feedbackMessages } from "../utils/FeedbackMessages.js";
 import dayjs from "dayjs";
 import dayOfYear from "dayjs/plugin/dayOfYear.js"
+import isoWeek from "dayjs/plugin/isoWeek.js"
 import Documento from "../models/Documento.js";
 import Entrenamiento from "../models/Entrenamiento.js";
 import EstadoSesion from "../models/EstadoSesion.js";
@@ -15,6 +16,7 @@ import Suscripcion from "../models/Suscripcion.js";
 import { Op } from "sequelize";
 
 dayjs.extend(dayOfYear);
+dayjs.extend(isoWeek);
 
 const validarSesiones = (sesiones) => {
 
@@ -184,22 +186,28 @@ export const getResumen = async (req, res) => {
     //¿Para que año?
     const { idSuscripcion } = req.params;
     const { idEquipo } = req.body;
-
-    //Determinar 1er y último día del año
-    console.log('idEquipo,idSuscripcion', idEquipo, '-', idSuscripcion);
-
+            
+    
+    const fechaInicio = dayjs().startOf('year').day(0).toISOString('YYYY-MM-DD');
+    const fechaFin = dayjs().endOf('year').day(6).toISOString('YYYY-MM-DD');    
+    
+    console.log('#️⃣  Inicio año runner: ',fechaInicio);
+    console.log('#️⃣  Fin año runnner: ',fechaFin);
+    
     try {
         const where = {
-            idSuscripcion,            
-        }        
+            idSuscripcion,
+            fechaSesion: {
+                [Op.between]:[fechaInicio, fechaFin]
+            }
 
-        let sesiones = await SesionEntrenamiento.findAll({
-            where,            
+        };
+        const order = [[ 'fechaSesion', 'ASC']];       
+
+        let sesiones = await SesionEntrenamiento.findAll({            
+            where,
             include: [{
-                model: Entrenamiento,
-                where: {
-                    idEntrenamiento: { [Op.ne]: null }
-                }
+                model: Entrenamiento,               
             }, {
                 model: Suscripcion,
                 where: {
@@ -208,12 +216,38 @@ export const getResumen = async (req, res) => {
                     activo: true
                 },
             }
-            ]
+            ],
+            order
         })
 
+       /*  const sesionesMap = sesiones.map(sesion => {
+            const sesionJSON = sesion.toJSON();
+            return {
+                ...sesionJSON,
+                isoWeekOfYear: dayjs(sesion.fechaSesion).isoWeek()
+                
+            }
+        }) */
+
+
+
+        if(sesiones.length === 0){
+            throw ErrorFactory.createError(errorTypes.NO_DATA_ERROR, feedbackMessages.NO_DATA_FOUND);            
+        }        
+        
+        /* const fechaUltimaSesion = dayjs(sesiones[sesiones.length-1].fechaSesion);
+        console.log('#️⃣  Fecha última sesión cargada: ', fechaUltimaSesion.toISOString('dd/mm/YYYY'));
+        const fechaCorte = fechaUltimaSesion.endOf('month');
+        console.log('#️⃣  La última sesión es:', fechaCorte.toISOString('dd/mm/YYYY')); */
+
+
+
+
+
+
+
+
         //inicio del año running
-        console.log('Filtro | inicio año runner-->',dayjs().startOf('year').day(0));
-        console.log('Filtro | Fin año runnner-->',dayjs().endOf('year').day(6));
 
         return res.status(200).json({sesiones});
 

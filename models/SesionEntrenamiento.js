@@ -1,6 +1,11 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from '../config/database.js'
 import Entrenamiento from "./Entrenamiento.js";
+import _ from "lodash"
+import dayjs from "dayjs";
+import isoWeek from "dayjs/plugin/isoWeek.js"
+
+dayjs.extend(isoWeek);
 
 const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     idSesion:{
@@ -13,6 +18,11 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     },
     fechaSesion:{
         type: DataTypes.DATE
+    },
+    isoWeek:{
+        type:DataTypes.VIRTUAL,
+        allowNull: false,
+
     },
     Objetivo:{
         type: DataTypes.TEXT('medium')
@@ -41,7 +51,20 @@ const SesionEntrenamiento = sequelize.define('SesionEntrenamiento',{
     idUsuarioModificador:{
         type:DataTypes.INTEGER
     }
-},{tableName: 'sesiones'});
+},{
+    tableName: 'sesiones',
+    hooks:{
+        afterFind: (sesiones) => {
+            if(_.isArray(sesiones)){
+                sesiones.forEach(sesion =>{
+                    sesion.isoWeek = dayjs(sesion.fechaSesion).isoWeek();
+                })
+            }else{
+                sesiones.isoWeek = dayjs(sesiones.fechaSesion).isoWeek();
+            }
+        }
+    }
+});
 
 SesionEntrenamiento.hasOne(Entrenamiento,{
   foreignKey: 'idSesion',
