@@ -13,7 +13,7 @@ import MediaEntrenamiento from "../models/MediaEntrenamiento.js";
 import SesionEntrenamiento from "../models/SesionEntrenamiento.js";
 import TipoSesion from "../models/TipoSesion.js";
 import Suscripcion from "../models/Suscripcion.js";
-import { Op } from "sequelize";
+import { col, fn, Op } from "sequelize";
 
 dayjs.extend(dayOfYear);
 dayjs.extend(isoWeek);
@@ -51,6 +51,7 @@ const existeSesion = async ({ idSuscripcion, idTipoSesion, fechaSesion, Objetivo
     }
 
 }
+
 export const create = async (req, res) => {
 
     const { sesiones, idUserLogged } = req.body;
@@ -182,32 +183,30 @@ export const updateStatus = async (req, res) => {
 
 export const getResumen = async (req, res) => {
 
-    //¿a que usuario?
-    //¿Para que año?
     const { idSuscripcion } = req.params;
     const { idEquipo } = req.body;
-            
-    
+
+
     const fechaInicio = dayjs().startOf('year').day(0).toISOString('YYYY-MM-DD');
-    const fechaFin = dayjs().endOf('year').day(6).toISOString('YYYY-MM-DD');    
-    
-    console.log('#️⃣  Inicio año runner: ',fechaInicio);
-    console.log('#️⃣  Fin año runnner: ',fechaFin);
-    
+    const fechaFin = dayjs().endOf('year').day(6).toISOString('YYYY-MM-DD');
+
+    console.log('#️⃣  Inicio año runner: ', fechaInicio);
+    console.log('#️⃣  Fin año runnner: ', fechaFin);
+
     try {
         const where = {
             idSuscripcion,
             fechaSesion: {
-                [Op.between]:[fechaInicio, fechaFin]
+                [Op.between]: [fechaInicio, fechaFin]
             }
 
         };
-        const order = [[ 'fechaSesion', 'ASC']];       
+        const order = [['fechaSesion', 'ASC']];
 
-        let sesiones = await SesionEntrenamiento.findAll({            
+        let sesiones = await SesionEntrenamiento.findAll({
             where,
             include: [{
-                model: Entrenamiento,               
+                model: Entrenamiento,
             }, {
                 model: Suscripcion,
                 where: {
@@ -217,39 +216,80 @@ export const getResumen = async (req, res) => {
                 },
             }
             ],
-            order
-        })
+            order,
+        });
 
-       /*  const sesionesMap = sesiones.map(sesion => {
-            const sesionJSON = sesion.toJSON();
-            return {
-                ...sesionJSON,
-                isoWeekOfYear: dayjs(sesion.fechaSesion).isoWeek()
-                
+        if (sesiones.length === 0) {
+            throw ErrorFactory.createError(errorTypes.NO_DATA_ERROR, feedbackMessages.NO_DATA_FOUND);
+        }
+
+        const sesionesGroup = sesiones.reduce((acc, sesion) => {
+
+            const { idSuscripcion, isoWeek, isoWeekYear, Entrenamiento } = sesion;
+
+            const key = `${idSuscripcion}-${isoWeek}-${isoWeekYear}`;
+
+            if (!acc[key]) {
+                acc[key] = {
+                    idSuscripcion,
+                    isoWeek,
+                    isoWeekYear,
+                    distanciaTotal: 0
+                };
             }
-        }) */
+
+            if (Entrenamiento && Entrenamiento.distancia) {
+                acc[key].distanciaTotal += Entrenamiento.distancia;
+            }
+
+            return acc;
+        }, {});
+
+        let result = {
+            semana1: [],
+            semana2: [],
+            semana3: [],
+            semana4: []
+        }
+
+        Object.keys(sesionesGroup).forEach(key => {
+
+            const [idSuscripcion, isoWeek, isoWeekYear] = key.split('-');
+
+            switch (parseInt(isoWeek) % 4) {
+                case 0:
+                    result.semana4.push(sesionesGroup[key].distanciaTotal);
+                    break;
+                case 1:
+                    result.semana1.push(sesionesGroup[key].distanciaTotal);
+                    break;
+                case 2:
+                    result.semana2.push(sesionesGroup[key].distanciaTotal);
+                    break;
+                case 3:
+                    result.semana3.push(sesionesGroup[key].distanciaTotal);
+                    break;
+            }
+        });
 
 
 
-        if(sesiones.length === 0){
-            throw ErrorFactory.createError(errorTypes.NO_DATA_ERROR, feedbackMessages.NO_DATA_FOUND);            
-        }        
-        
+
+
+
+
+
+
+
+        //const groupSesiones = _.groupBy(sesiones, sesion => `${sesion.idSuscripcion}-${sesion.isoWeekYear}-${sesion.isoWeek}`);
         /* const fechaUltimaSesion = dayjs(sesiones[sesiones.length-1].fechaSesion);
         console.log('#️⃣  Fecha última sesión cargada: ', fechaUltimaSesion.toISOString('dd/mm/YYYY'));
         const fechaCorte = fechaUltimaSesion.endOf('month');
         console.log('#️⃣  La última sesión es:', fechaCorte.toISOString('dd/mm/YYYY')); */
 
-
-
-
-
-
-
-
         //inicio del año running
 
-        return res.status(200).json({sesiones});
+        return res.status(200).json({ result });
 
     } catch (error) {
         console.log(error.message);
@@ -265,6 +305,8 @@ export const getResumen = async (req, res) => {
 
         return res.status(STATUS_CODE).json({ message: MESSAGE });
     }
+
+
 
 
 
