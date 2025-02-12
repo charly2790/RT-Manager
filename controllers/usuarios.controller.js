@@ -38,9 +38,11 @@ export const getUsuarios = async (req, res) => {
     if(!idEquipo) return res.status(400).json({message: "All fields are required"});
     
     let usuarios = [];
+    const attributes = ['idUsuario','email','idRol','fechaInicio','fechaFin','estado'];
 
     try {
-        usuarios = await Usuario.findAll({ include: [{ model: Perfil},{ model: Suscripcion, where: { idEquipo, activo: true }}] });
+        usuarios = await Usuario.findAll({ attributes, 
+            include: [{ model: Perfil},{ model: Suscripcion, where: { idEquipo, activo: true }}] });
     } catch (error) {
         console.log(`Error al recuperar usuarios: \n ${error}`);
         return res.status(500).json({message: "Internal server error"});
