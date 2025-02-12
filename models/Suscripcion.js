@@ -24,7 +24,10 @@ const Suscripcion = sequelize.define('Suscripcion',{
       type:DataTypes.INTEGER
     }
 },{
-  tableName:'suscripciones'
+  tableName:'suscripciones',
+  name:{
+    plural: 'suscripciones'
+  }
 })
 
 Suscripcion.hasMany(SesionEntrenamiento,{
